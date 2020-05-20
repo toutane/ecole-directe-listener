@@ -80,21 +80,42 @@ const fetchTime_prompts = [
 // Do fetch at every interval:
 async function fetchTimer(token, eleveId) {
   const response = await prompts(fetchTime_prompts);
+
+  let items = [];
+
   let interval = response.minutes * 60 * 1000;
   setInterval(function () {
-    fetchData(token, eleveId);
+    fetchData(token, eleveId, items);
   }, interval);
 }
 
-const fetchData = (token, eleveId) => {
-  getNotes(token, eleveId);
+const fetchData = (token, eleveId, items) => {
+  getNotes(token, eleveId, items);
+  getAgenda(token, eleveId, items);
 };
 
 async function getNotes(token, eleveId) {
-  console.log(
-    `Trying to get notes of eleve: ${eleveId} with token: ${token.slice(
-      0,
-      10
-    )}...`
+  // console.log(
+  //   `Trying to get notes of eleve: ${eleveId} with token: ${token.slice(
+  //     0,
+  //     10
+  //   )}...`
+  // );
+}
+
+async function getAgenda(token, eleveId, items) {
+  let data = `data={ "token": "${token}" }`;
+  let response = await fetch(
+    `${url}/v3/Eleves/${eleveId}/cahierdetexte.awp?verbe=get&`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/edn",
+      },
+      body: data,
+    }
   );
+  let result = await response.json();
+  items.push(result.data.length);
+  console.log(items);
 }
