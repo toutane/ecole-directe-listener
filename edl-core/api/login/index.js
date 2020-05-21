@@ -1,24 +1,16 @@
-const express = require("express");
 const fetch = require("node-fetch");
 const ora = require("ora");
 
-const app = express();
-
-const PORT = 8080;
-
-// app.get("/", (req, res) => {
-//   res.send("⚡️Ecole Directe Real Time Notifications Server");
-// });
-
-app.listen(PORT, () => {
-  // console.log(`Server running at: http://localhost:${PORT}/`);
-});
+module.exports = (req, res) => {
+  // const { name } = req.body;
+  // res.send(
+  //   `This response would create a new team called ${name}, using a POST request.`
+  // );
+  // res.send(req.query.username);
+  auth(req, res);
+};
 
 const url = "https://api.ecoledirecte.com";
-
-app.get("/login", (req, res) => {
-  auth(req, res);
-});
 
 async function auth(req, res) {
   await login(req.query).then((authenticated) =>
@@ -39,23 +31,23 @@ async function login(user) {
   });
 
   let result = await response.json();
-
+  let interval = 1;
   result.code === 200
-    ? (authSpinner.succeed(
+    ? authSpinner.succeed(
         `Successfully authenticated, eleveId: ${
           result.data.accounts[0].id
         }, token: ${result.token.slice(0, 10)}... `
-      ),
-      fetchTimer(result.token, result.data.accounts[0].id))
-    : authSpinner.fail(`Failed to authenticate, error code: ${result.code}`);
+      )
+    : // GO or STOP fetchTimer(interval, result.token, result.data.accounts[0].id)
+      authSpinner.fail(`Failed to authenticate, error code: ${result.code}`);
   return result.code === 200;
 }
 
-async function fetchTimer(token, eleveId) {
+async function fetchTimer(minutes, token, eleveId) {
   let num = 0;
   let items = [];
   // let interval = 1 * 60 * 1000;
-  let interval = 1 * 500;
+  let interval = minutes * 60 * 1000;
   setInterval(() => {
     num++;
     fetchData(token, eleveId, items, num);
