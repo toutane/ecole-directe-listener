@@ -6,9 +6,9 @@ const app = express();
 
 const PORT = 8080;
 
-app.get("/", (req, res) => {
-  res.send("⚡️Ecole Directe Real Time Notifications Server");
-});
+// app.get("/", (req, res) => {
+//   res.send("⚡️Ecole Directe Real Time Notifications Server");
+// });
 
 app.listen(PORT, () => {
   // console.log(`Server running at: http://localhost:${PORT}/`);
@@ -16,12 +16,12 @@ app.listen(PORT, () => {
 
 const url = "https://api.ecoledirecte.com";
 
-app.get("/login/:username/:password", (req, res) => {
+app.get("/login", (req, res) => {
   auth(req, res);
 });
 
 async function auth(req, res) {
-  await login(req.params).then((authenticated) =>
+  await login(req.query).then((authenticated) =>
     authenticated ? res.send(`Succeed to connect`) : res.send(`Fail to connect`)
   );
 }
