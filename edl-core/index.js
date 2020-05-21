@@ -16,7 +16,7 @@ app.listen(PORT, () => {
 
 const url = "https://api.ecoledirecte.com";
 
-app.get("/login/:username/:password", (req, res) => {
+app.get("/login/:username/:password/:interval", (req, res) => {
   auth(req, res);
 });
 
@@ -26,8 +26,8 @@ async function auth(req, res) {
   );
 }
 
-async function login(user) {
-  let data = `data={ "identifiant": "${user.username}", "motdepasse": "${user.password}" }`;
+async function login(req) {
+  let data = `data={ "identifiant": "${req.username}", "motdepasse": "${req.password}" }`;
 
   let authSpinner = await ora("Trying to connect").start();
   let response = await fetch(`${url}/v3/login.awp`, {
@@ -46,16 +46,16 @@ async function login(user) {
           result.data.accounts[0].id
         }, token: ${result.token.slice(0, 10)}... `
       ),
-      fetchTimer(result.token, result.data.accounts[0].id))
+      fetchTimer(req.interval, result.token, result.data.accounts[0].id))
     : authSpinner.fail(`Failed to authenticate, error code: ${result.code}`);
   return result.code === 200;
 }
 
-async function fetchTimer(token, eleveId) {
+async function fetchTimer(minutes, token, eleveId) {
   let num = 0;
   let items = [];
   // let interval = 1 * 60 * 1000;
-  let interval = 1 * 500;
+  let interval = minutes * 1000;
   setInterval(() => {
     num++;
     fetchData(token, eleveId, items, num);
