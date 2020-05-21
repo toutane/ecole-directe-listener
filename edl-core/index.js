@@ -1,6 +1,6 @@
 const express = require("express");
-const prompts = require("prompts");
 const fetch = require("node-fetch");
+const ora = require("ora");
 
 const app = express();
 
@@ -16,39 +16,20 @@ app.listen(PORT, () => {
 
 const url = "https://api.ecoledirecte.com";
 
-const auth_prompts = [
-  {
-    type: "text",
-    name: "username",
-    message: "Username:",
-  },
-  {
-    type: "password",
-    name: "password",
-    message: "Password:",
-  },
-];
-
-app.get("/login", (req, res) => {
-  auth(res);
+app.get("/login/:username/:password", (req, res) => {
+  auth(req, res);
 });
 
-async function auth(res) {
-  const response = await prompts(auth_prompts);
-  await login(response).then((result) =>
-    result[0]
-      ? (res.send(`Token: ${JSON.stringify(result[1])}`),
-        console.log(
-          `Successfully authenticated ! Token: ${result[1].slice(0, 10)}...`
-        ),
-        fetchTimer(result[1], result[2]))
-      : (res.send("Sorry, error when try to log..."),
-        console.error("Error when try to log..."))
+async function auth(req, res) {
+  await login(req.params).then((authenticated) =>
+    authenticated ? res.send(`Succeed to connect`) : res.send(`Fail to connect`)
   );
 }
 
 async function login(user) {
   let data = `data={ "identifiant": "${user.username}", "motdepasse": "${user.password}" }`;
+
+  let authSpinner = await ora("Trying to connect").start();
   let response = await fetch(`${url}/v3/login.awp`, {
     method: "POST",
     headers: {
@@ -56,55 +37,43 @@ async function login(user) {
     },
     body: data,
   });
+
   let result = await response.json();
-  let token = result.token;
-  let eleveId = result.data.accounts[0].id;
-  let authenticated = token !== "";
-  return authenticated && [authenticated, token, eleveId];
+
+  result.code === 200
+    ? (authSpinner.succeed(
+        `Successfully authenticated, eleveId: ${
+          result.data.accounts[0].id
+        }, token: ${result.token.slice(0, 10)}... `
+      ),
+      fetchTimer(result.token, result.data.accounts[0].id))
+    : authSpinner.fail(`Failed to authenticate, error code: ${result.code}`);
+  return result.code === 200;
 }
 
-const fetchTime_prompts = [
-  {
-    type: "number",
-    name: "minutes",
-    message: "Fetch every how many minutes:",
-    // validate: (value) => (value < 5 ? `Are you crazy mate ?!` : true),
-  },
-  {
-    type: "confirm",
-    name: "proccess",
-    message: "Do you want to proccess?",
-    initial: true,
-  },
-];
-// Do fetch at every interval:
 async function fetchTimer(token, eleveId) {
-  const response = await prompts(fetchTime_prompts);
-
+  let num = 0;
   let items = [];
-
-  let interval = response.minutes * 60 * 1000;
-  setInterval(function () {
-    fetchData(token, eleveId, items);
+  // let interval = 1 * 60 * 1000;
+  let interval = 1 * 500;
+  setInterval(() => {
+    num++;
+    fetchData(token, eleveId, items, num);
   }, interval);
 }
 
-const fetchData = (token, eleveId, items) => {
-  getNotes(token, eleveId, items);
-  getAgenda(token, eleveId, items);
+const fetchData = (token, eleveId, items, num) => {
+  getAgenda(token, eleveId, items, num);
+  // getNotes(token, eleveId, items);
 };
 
-async function getNotes(token, eleveId) {
-  // console.log(
-  //   `Trying to get notes of eleve: ${eleveId} with token: ${token.slice(
-  //     0,
-  //     10
-  //   )}...`
-  // );
-}
+// async function getNotes(token, eleveId) {}
 
-async function getAgenda(token, eleveId, items) {
+async function getAgenda(token, eleveId, items, num) {
   let data = `data={ "token": "${token}" }`;
+
+  let fetchingSpinner = await ora("Fetching agenda").start();
+  fetchingSpinner.color = "green";
   let response = await fetch(
     `${url}/v3/Eleves/${eleveId}/cahierdetexte.awp?verbe=get&`,
     {
@@ -116,6 +85,18 @@ async function getAgenda(token, eleveId, items) {
     }
   );
   let result = await response.json();
-  items.push(result.data.length);
-  console.log(items);
+  result.code === 200
+    ? (fetchingSpinner.succeed(`Success`),
+      await items.push(Object.keys(result.data).length))
+    : fetchingSpinner.fail(`Failed`);
+  items.length !== 0
+    ? items[items.length - 1] !== Object.keys(result.data).length
+      ? console.log(
+          `New item ( ${items.length} item(s), fetch number: ${num} )`
+        )
+      : console.log(
+          `No new item ( ${items.length} item(s), fetch number: ${num} )`
+        )
+    : null;
+  items.shift();
 }
