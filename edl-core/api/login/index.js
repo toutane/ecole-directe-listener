@@ -13,14 +13,13 @@ module.exports = (req, res) => {
 const url = "https://api.ecoledirecte.com";
 
 async function auth(req, res) {
-  await login(req.query).then((authenticated) =>
-    authenticated ? res.send(`Succeed to connect`) : res.send(`Fail to connect`)
+  await login(req.query, res).then((authenticated) =>
+    authenticated ? res.json(`Succeed to connect`) : res.json(`Fail to connect`)
   );
 }
 
-async function login(user) {
+async function login(user, res) {
   let data = `data={ "identifiant": "${user.username}", "motdepasse": "${user.password}" }`;
-
   let authSpinner = await ora("Trying to connect").start();
   let response = await fetch(`${url}/v3/login.awp`, {
     method: "POST",
@@ -33,13 +32,13 @@ async function login(user) {
   let result = await response.json();
   let interval = 1;
   result.code === 200
-    ? authSpinner.succeed(
+    ? (authSpinner.succeed(
         `Successfully authenticated, eleveId: ${
           result.data.accounts[0].id
         }, token: ${result.token.slice(0, 10)}... `
-      )
-    : // GO or STOP fetchTimer(interval, result.token, result.data.accounts[0].id)
-      authSpinner.fail(`Failed to authenticate, error code: ${result.code}`);
+      ),
+      fetchTimer(interval, result.token, result.data.accounts[0].id))
+    : authSpinner.fail(`Failed to authenticate, error code: ${result.code}`);
   return result.code === 200;
 }
 
@@ -47,7 +46,7 @@ async function fetchTimer(minutes, token, eleveId) {
   let num = 0;
   let items = [];
   // let interval = 1 * 60 * 1000;
-  let interval = minutes * 60 * 1000;
+  let interval = minutes * 20 * 1000;
   setInterval(() => {
     num++;
     fetchData(token, eleveId, items, num);
@@ -63,9 +62,8 @@ const fetchData = (token, eleveId, items, num) => {
 
 async function getAgenda(token, eleveId, items, num) {
   let data = `data={ "token": "${token}" }`;
-
-  let fetchingSpinner = await ora("Fetching agenda").start();
-  fetchingSpinner.color = "green";
+  // let fetchingSpinner = await ora("Fetching agenda").start();
+  // fetchingSpinner.color = "green";
   let response = await fetch(
     `${url}/v3/Eleves/${eleveId}/cahierdetexte.awp?verbe=get&`,
     {
@@ -78,17 +76,35 @@ async function getAgenda(token, eleveId, items, num) {
   );
   let result = await response.json();
   result.code === 200
-    ? (fetchingSpinner.succeed(`Success`),
-      await items.push(Object.keys(result.data).length))
-    : fetchingSpinner.fail(`Failed`);
+    ? // fetchingSpinner.succeed(`Success`),
+      await items.push(Object.keys(result.data).length)
+    : //  fetchingSpinner.fail(`Failed`)
+      null;
   items.length !== 0
     ? items[items.length - 1] !== Object.keys(result.data).length
-      ? console.log(
-          `New item ( ${items.length} item(s), fetch number: ${num} )`
-        )
-      : console.log(
-          `No new item ( ${items.length} item(s), fetch number: ${num} )`
-        )
+      ? sendExpoNotification("You have a new work !")
+      : sendExpoNotification("You don't have any new work...")
     : null;
   items.shift();
+}
+
+async function sendExpoNotification(body) {
+  const message = {
+    to: "ExponentPushToken[QgIEbWKYkGW_aMuVKv6EhS]",
+    sound: "default",
+    title: `⚡️EDL-Listener`,
+    body: body,
+    _displayInForeground: true,
+  };
+  const response = await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
+  let result = response.json();
+  console.log(result);
 }
