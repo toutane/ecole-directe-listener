@@ -40,8 +40,8 @@ const AuthProvider = (props) => {
       : console.log(`Failed to authenticate, error code: ${result.code}`);
   }
 
-  async function logout() {
-    await setAuthenticated("");
+  function logout() {
+    setAuthenticated("");
     setToken("");
     setEleveId("");
   }

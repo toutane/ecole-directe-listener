@@ -10,7 +10,9 @@ const UserProvider = (props) => {
   const [password, setPassword] = useState("cec3Nad5te");
 
   return (
-    <Provider value={{ username, password, setToken, setEleveId }}>
+    <Provider
+      value={{ username, password, token, eleveId, setToken, setEleveId }}
+    >
       {props.children}
     </Provider>
   );
