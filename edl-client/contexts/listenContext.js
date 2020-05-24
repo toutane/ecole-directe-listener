@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 
 import { UserContext } from "./userContext";
 
-const url = "http://192.168.86.183:3000/api";
-// const url = "https://edl-core.toutane.now.sh/api";
+// const url = "http://192.168.86.183:3000/api";
+const url = "https://edl-core.toutane.now.sh/api";
 
 const ListenContext = React.createContext();
 const { Provider } = ListenContext;
@@ -30,7 +30,7 @@ const ListenProvider = (props) => {
     let result = await response.json();
     result.status === "success"
       ? (setIsListening(true), setCronId(result.cron_job_id))
-      : setIsListening(false);
+      : (setIsListening(false), console.log(result.error));
     setIsLoading(false);
   }
 

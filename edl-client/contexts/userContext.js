@@ -20,6 +20,7 @@ const UserProvider = (props) => {
         password,
         token,
         eleveId,
+        setUsername,
         setToken,
         setEleveId,
         expoPushToken,
