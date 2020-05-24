@@ -9,62 +9,46 @@ const ListenContext = React.createContext();
 const { Provider } = ListenContext;
 
 const ListenProvider = (props) => {
-  const { token, eleveId } = useContext(UserContext);
+  const { token, eleveId, expoPushToken } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
-  async function startListening() {
-    let order = "start";
-    let interval = 1 * 2000;
+  const [cronId, setCronId] = useState("");
 
+  const [interval, setInterval] = useState(1);
+
+  async function startListening() {
     setIsLoading(true);
     let response = await fetch(
-      `${url}/start?order=${order}&interval=${interval}&token=${token}&eleveId=${eleveId}`,
+      `${url}/start?interval=${interval}&token=${token}&eleveId=${eleveId}&expoPushToken=${expoPushToken}`,
       {
         method: "GET",
       }
     );
+
     let result = await response.json();
-    setIsListening(true);
+    result.status === "success"
+      ? (setIsListening(true), setCronId(result.cron_job_id))
+      : setIsListening(false);
     setIsLoading(false);
-    console.log(result.status);
   }
 
   async function stopListening() {
-    let order = "stop";
-    let interval = 1 * 2000;
-
     setIsLoading(true);
-    let response = await fetch(
-      `${url}/stop?order=${order}&interval=${interval}&token=${token}&eleveId=${eleveId}`,
-      {
-        method: "GET",
-      }
-    );
+    let response = await fetch(`${url}/stop?id=${cronId}`, {
+      method: "GET",
+    });
+
     let result = await response.json();
-    setIsListening(false);
+    result.status === "success" && (setIsListening(false), setCronId(""));
     setIsLoading(false);
-    console.log(result.status);
   }
 
-  // async function listening(order) {
-  //   let interval = 1 * 1000;
-
-  //   setIsListening(true);
-  //   let response = await fetch(
-  //     `${url}/listen?order=${order}&interval=${interval}&token=${token}&eleveId=${eleveId}`,
-  //     {
-  //       method: "GET",
-  //     }
-  //   );
-  //   let result = await response.json();
-  //   setIsListening(false);
-  //   console.log(result.value);
-  // }
-
   return (
-    <Provider value={{ isLoading, isListening, startListening, stopListening }}>
+    <Provider
+      value={{ cronId, isLoading, isListening, startListening, stopListening }}
+    >
       {props.children}
     </Provider>
   );
