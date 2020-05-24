@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, View, TextInput, Text } from "react-native";
+import { StyleSheet, View, TextInput } from "react-native";
 
 import { AuthContext } from "../contexts/authContext";
 import { UserContext } from "../contexts/userContext";
@@ -31,7 +31,7 @@ export default function AuthInput() {
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 30, alignItems: "center" },
+  container: { paddingHorizontal: 30, alignItems: "center", marginTop: 20 },
   input: {
     height: 50,
     width: 250,

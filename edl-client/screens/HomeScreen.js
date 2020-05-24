@@ -13,7 +13,6 @@ import { UserContext } from "../contexts/userContext";
 import { ListenContext } from "../contexts/listenContext";
 import { PermissionsContext } from "../contexts/permissionsContext";
 
-import ControlButton from "../components/ControlButton";
 import AuthInput from "../components/AuthInputs";
 import NotificationsAlert from "../components/NotificationsAlert";
 import ListeningView from "../components/ListeningView";

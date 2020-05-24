@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { Feather } from "@expo/vector-icons";
 
 import { ListenContext } from "../contexts/listenContext";
 import ControlButton from "./ControlButton";
@@ -11,11 +10,6 @@ export default function ListeningView() {
   return (
     <View style={styles.container}>
       <View style={styles.hr} />
-      <Feather
-        name="headphones"
-        size={40}
-        style={{ marginBottom: 10, color: "#ccc" }}
-      />
       <Text style={styles.text}>
         {isListening
           ? `→ You are listening with Cron ID: ${cronId}`
@@ -43,5 +37,6 @@ const styles = StyleSheet.create({
     color: "rgba(96,100,109, 0.5)",
     lineHeight: 24,
     textAlign: "center",
+    marginBottom: 10,
   },
 });
