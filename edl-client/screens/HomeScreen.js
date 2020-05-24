@@ -9,10 +9,12 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 
 import { AuthContext } from "../contexts/authContext";
+import { ListenContext } from "../contexts/listenContext";
 import ControlButton from "../components/ControlButton";
 
 export default function HomeScreen() {
   const { authenticated, loading, login, logout } = useContext(AuthContext);
+  const { isListening, cronId } = useContext(ListenContext);
 
   return (
     <View style={styles.container}>
@@ -32,9 +34,14 @@ export default function HomeScreen() {
         <View style={{ marginTop: 5, marginBottom: 10 }}>
           <Text style={styles.text}>{`You are ${
             !authenticated ? "not" : ""
-          } authenticated.`}</Text>
+          } authenticated`}</Text>
         </View>
         {authenticated ? <ControlButton /> : null}
+        <View style={{ paddingVertical: 10 }}>
+          <Text style={styles.text}>
+            {isListening ? `Listening with Cron ID: ${cronId}` : ""}
+          </Text>
+        </View>
       </ScrollView>
     </View>
   );
