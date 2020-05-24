@@ -9,12 +9,20 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 
 import { AuthContext } from "../contexts/authContext";
+import { UserContext } from "../contexts/userContext";
 import { ListenContext } from "../contexts/listenContext";
+import { PermissionsContext } from "../contexts/permissionsContext";
+
 import ControlButton from "../components/ControlButton";
+import AuthInput from "../components/AuthInputs";
+import NotificationsAlert from "../components/NotificationsAlert";
+import ListeningView from "../components/ListeningView";
 
 export default function HomeScreen() {
   const { authenticated, loading, login, logout } = useContext(AuthContext);
-  const { isListening, cronId } = useContext(ListenContext);
+  const { password, username, error, setError } = useContext(UserContext);
+  const { isListening } = useContext(ListenContext);
+  const { isNotificationsGranted } = useContext(PermissionsContext);
 
   return (
     <View style={styles.container}>
@@ -27,21 +35,45 @@ export default function HomeScreen() {
           {loading && <ActivityIndicator />}
         </View>
         {authenticated ? (
-          <Button title="Logout" onPress={() => logout()} />
+          <Button
+            title="Logout"
+            onPress={() =>
+              isListening
+                ? setError("Please stop listening to logout")
+                : logout()
+            }
+          />
         ) : (
-          <Button title="Login to Ecole Directe" onPress={() => login()} />
+          <Button
+            title="Login to Ecole Directe"
+            onPress={() =>
+              (username && password) === ""
+                ? setError("Please fill the requiered fields")
+                : login()
+            }
+          />
         )}
-        <View style={{ marginTop: 5, marginBottom: 10 }}>
-          <Text style={styles.text}>{`You are ${
-            !authenticated ? "not" : ""
-          } authenticated`}</Text>
-        </View>
-        {authenticated ? <ControlButton /> : null}
-        <View style={{ paddingVertical: 10 }}>
-          <Text style={styles.text}>
-            {isListening ? `Listening with Cron ID: ${cronId}` : ""}
+        <View style={{ paddingVertical: 5 }}>
+          <Text
+            style={[
+              styles.text,
+              {
+                color:
+                  error !== " " ? "rgb(255, 59, 48)" : "rgba(96,100,109, 0.5)",
+              },
+            ]}
+          >
+            {error === " "
+              ? `You are ${!authenticated ? "not" : ""} authenticated ${
+                  !authenticated ? "" : "with: " + username
+                }`
+              : error}
           </Text>
         </View>
+        {authenticated ? <ListeningView /> : <AuthInput />}
+        {authenticated && !isNotificationsGranted ? (
+          <NotificationsAlert />
+        ) : null}
       </ScrollView>
     </View>
   );
@@ -64,7 +96,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: "700", textAlign: "center" },
   text: {
     fontSize: 17,
-    color: "rgba(96,100,109, 1)",
+    color: "rgba(96,100,109, 0.5)",
     lineHeight: 24,
     textAlign: "center",
   },

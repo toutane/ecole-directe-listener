@@ -33,7 +33,7 @@ export default function NotificationsAlert() {
 }
 
 const styles = StyleSheet.create({
-  container: { alignItems: "center", paddingHorizontal: 50 },
+  container: { alignItems: "center", paddingHorizontal: 40 },
   hr: {
     height: 1.5,
     width: "100%",
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   textButton: { fontSize: 17, color: "rgb(0, 122, 255)" },
   text: {
     fontSize: 15,
-    color: "rgba(96,100,109, 1)",
+    color: "rgba(96,100,109, 0.5)",
     lineHeight: 24,
     textAlign: "center",
   },

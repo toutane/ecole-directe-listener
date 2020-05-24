@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { AsyncStorage } from "react-native";
 
 import { UserContext } from "./userContext";
 
@@ -9,7 +10,11 @@ const ListenContext = React.createContext();
 const { Provider } = ListenContext;
 
 const ListenProvider = (props) => {
-  const { token, eleveId, expoPushToken } = useContext(UserContext);
+  useEffect(() => {
+    _retrieveData();
+  }, []);
+
+  const { token, eleveId, expoPushToken, setError } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -29,7 +34,15 @@ const ListenProvider = (props) => {
 
     let result = await response.json();
     result.status === "success"
-      ? (setIsListening(true), setCronId(result.cron_job_id))
+      ? (setIsListening(true),
+        setCronId(result.cron_job_id),
+        AsyncStorage.setItem(
+          "listen",
+          JSON.stringify({
+            isListening: true,
+            cron_job_id: result.cron_job_id,
+          })
+        ))
       : (setIsListening(false), console.log(result.error));
     setIsLoading(false);
   }
@@ -41,9 +54,32 @@ const ListenProvider = (props) => {
     });
 
     let result = await response.json();
-    result.status === "success" && (setIsListening(false), setCronId(""));
+    result.status === "success" &&
+      (setIsListening(false),
+      setCronId(""),
+      AsyncStorage.setItem(
+        "listen",
+        JSON.stringify({
+          isListening: false,
+          cron_job_id: "",
+        })
+      ));
     setIsLoading(false);
+    setError(" ");
   }
+
+  const _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("listen");
+      if (value !== null) {
+        let result = await JSON.parse(value);
+        setIsListening(result.isListening);
+        setCronId(result.cron_job_id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Provider

@@ -16,9 +16,15 @@ const AuthProvider = (props) => {
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { username, password, setUsername, setToken, setEleveId } = useContext(
-    UserContext
-  );
+  const {
+    username,
+    password,
+    setUsername,
+    setPassword,
+    setToken,
+    setEleveId,
+    setError,
+  } = useContext(UserContext);
 
   async function login() {
     let data = `data={ "identifiant": "${username}", "motdepasse": "${password}" }`;
@@ -54,13 +60,17 @@ const AuthProvider = (props) => {
             eleveId: result.data.accounts[0].id,
           })
         ))
-      : console.log(`Failed to authenticated, error code: ${result.code}`);
+      : (console.log(`Failed to authenticated, error code: ${result.code}`),
+        setError(result.message),
+        setLoading(false));
   }
 
   function logout() {
     setAuthenticated("");
     setToken("");
     setEleveId("");
+    setUsername("");
+    setPassword("");
     AsyncStorage.setItem(
       "auth",
       JSON.stringify({

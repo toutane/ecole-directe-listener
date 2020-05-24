@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const UserContext = React.createContext();
 const { Provider } = UserContext;
@@ -10,8 +10,17 @@ const UserProvider = (props) => {
   const [expoPushToken, setExpoPushToken] = useState(
     "ExponentPushToken[QgIEbWKYkGW_aMuVKv6EhS]"
   );
-  const [username, setUsername] = useState("Toutane");
-  const [password, setPassword] = useState("cec3Nad5te");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [error, setError] = useState(" ");
+
+  useEffect(() => {
+    let timer = setTimeout(() => setError(" "), 2000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [error]);
 
   return (
     <Provider
@@ -21,8 +30,11 @@ const UserProvider = (props) => {
         token,
         eleveId,
         setUsername,
+        setPassword,
         setToken,
         setEleveId,
+        error,
+        setError,
         expoPushToken,
       }}
     >

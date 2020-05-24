@@ -19,21 +19,21 @@ export default function ControlButton() {
       <TouchableOpacity
         style={[
           styles.button,
-          { backgroundColor: !isListening ? "#91CB3E" : "#F40000" },
+          {
+            backgroundColor: !isListening
+              ? "rgb(52, 199, 89)"
+              : "rgb(255, 59, 48)",
+          },
         ]}
         onPress={() => (!isListening ? startListening() : stopListening())}
       >
         {!isLoading ? (
-          <Feather
-            name={!isListening ? "play-circle" : "pause-circle"}
-            size={25}
-            color="white"
-            style={{ marginRight: 7.5 }}
-          />
+          <Text style={styles.buttonText}>
+            {!isListening ? "START" : "STOP"}
+          </Text>
         ) : (
-          <ActivityIndicator color="white" style={{ marginRight: 7.5 }} />
+          <ActivityIndicator color="white" />
         )}
-        <Text style={styles.buttonText}>{!isListening ? "START" : "STOP"}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -41,10 +41,14 @@ export default function ControlButton() {
 
 const styles = StyleSheet.create({
   button: {
+    marginTop: 5,
+    height: 47,
+    width: 150,
+    borderRadius: 13,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 11,
     paddingHorizontal: 20,
   },
   buttonText: {

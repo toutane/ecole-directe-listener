@@ -14,14 +14,14 @@ export default function AuthInput() {
         style={styles.input}
         placeholder="Username"
         returnKeyType="next"
-        onChangeText={(e) => (setUsername(e), setError(""))}
+        onChangeText={(e) => (setUsername(e), setError(" "))}
         onSubmitEditing={() => passwordInput.focus()}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
         returnKeyType="go"
-        onChangeText={(e) => (setPassword(e), setError(""))}
+        onChangeText={(e) => (setPassword(e), setError(" "))}
         secureTextEntry={true}
         ref={(input) => (passwordInput = input)}
         onSubmitEditing={login}
@@ -31,7 +31,7 @@ export default function AuthInput() {
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 30, marginTop: 20, alignItems: "center" },
+  container: { paddingHorizontal: 30, alignItems: "center" },
   input: {
     height: 50,
     width: 250,
