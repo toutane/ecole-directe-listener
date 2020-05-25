@@ -43,7 +43,7 @@ const ListenProvider = (props) => {
             cron_job_id: result.cron_job_id,
           })
         ))
-      : (setIsListening(false), console.log(result.error));
+      : (setIsListening(false), setError(result.error.message));
     setIsLoading(false);
   }
 
@@ -54,16 +54,17 @@ const ListenProvider = (props) => {
     });
 
     let result = await response.json();
-    result.status === "success" &&
-      (setIsListening(false),
-      setCronId(""),
-      AsyncStorage.setItem(
-        "listen",
-        JSON.stringify({
-          isListening: false,
-          cron_job_id: "",
-        })
-      ));
+    result.status === "success"
+      ? (setIsListening(false),
+        setCronId(""),
+        AsyncStorage.setItem(
+          "listen",
+          JSON.stringify({
+            isListening: false,
+            cron_job_id: "",
+          })
+        ))
+      : setError(result.error);
     setIsLoading(false);
     setError(" ");
   }

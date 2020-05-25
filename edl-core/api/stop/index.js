@@ -25,7 +25,6 @@ async function deleteCronJob(query, res) {
   });
   let result = await response.json();
   deleteListen(query, res, result);
-  // res.send(result);
 }
 
 function deleteListen(query, res, result) {

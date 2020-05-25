@@ -1,5 +1,7 @@
 const fetch = require("node-fetch");
 const mongoose = require("mongoose");
+const shortid = require("shortid-36");
+
 const keys = require("../../.config/keys");
 import { token } from "../../.config/APItoken";
 
@@ -14,11 +16,15 @@ module.exports = (req, res) => {
 };
 
 async function addCronJob(query, res) {
+  let shortId = shortid.generate();
+
+  let params = { shortId: shortId, eleveId: query.eleveId };
   let cron = `https://www.easycron.com/rest`;
   let interval = `* * * * *`;
-  // TOKEN IS TOO LONG
-  let url = `https://edl-core.toutane.now.sh/api/notif?eleveId=${query.eleveId}`;
-  // let url = `https://edl-core.toutane.now.sh/api/agenda?eleveId=${query.eleveId}`;
+  let url = `https://edl-core.toutane.now.sh/api/agenda?params=${JSON.stringify(
+    params
+  )}`;
+  // let url = `https://edl-core.toutane.now.sh/api/agenda?eleveId=${query.eleveId}&shortId=${shortId}`;
   // let url = `http://192.168.86.183:3000/api/agenda?eleveId=${query.eleveId}&ed_token=${query.token}`;
 
   let response = await fetch(
@@ -31,12 +37,14 @@ async function addCronJob(query, res) {
     }
   );
   let result = await response.json();
-  newListen(query, result.cron_job_id, res);
-  // res.send(result);
+  result.status === "success"
+    ? newListen(query, result.cron_job_id, shortId, res)
+    : res.send(result);
 }
 
-function newListen(query, cronId, res) {
+function newListen(query, cronId, shortId, res) {
   const listen = {
+    shortId: shortId,
     cronId: cronId,
     tokenEd: query.token,
     eleleId: query.eleveId,
@@ -47,7 +55,7 @@ function newListen(query, cronId, res) {
     err
       ? res.send({
           status: "error",
-          error: `There was an error`,
+          error: { message: `There was an error` },
         })
       : res.send({
           status: "success",

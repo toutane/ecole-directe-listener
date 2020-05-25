@@ -9,7 +9,7 @@ async function sendClientNotification(query, res) {
     to: "ExponentPushToken[QgIEbWKYkGW_aMuVKv6EhS]",
     sound: "default",
     title: `⚡️EDL-Listener`,
-    body: `Send notif to: ${query.eleveId}`,
+    body: `Send notif to: ${query.eleveId}. Value: ${query.body}`,
     _displayInForeground: true,
   };
   const response = await fetch("https://exp.host/--/api/v2/push/send", {
