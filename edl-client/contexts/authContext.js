@@ -45,7 +45,9 @@ const AuthProvider = (props) => {
       ? (console.log(
           `Successfully authenticated, eleveId: ${
             result.data.accounts[0].id
-          }, token: ${result.token.slice(0, 10)}... `
+          }, token: ${result.token.slice(0, 10)}...${result.token.substr(
+            result.token.length - 10
+          )} `
         ),
         setAuthenticated(true),
         setLoading(false),
