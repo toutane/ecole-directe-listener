@@ -24,6 +24,9 @@ async function addCronJob(query, res) {
   let url = `https://edl-core.toutane.now.sh/api/agenda?params=${JSON.stringify(
     params
   )}`;
+  // let url = `http://192.168.86.183:3000/api/agenda?params=${JSON.stringify(
+  //   params
+  // )}`;
   // let url = `https://edl-core.toutane.now.sh/api/agenda?eleveId=${query.eleveId}&shortId=${shortId}`;
   // let url = `http://192.168.86.183:3000/api/agenda?eleveId=${query.eleveId}&ed_token=${query.token}`;
 

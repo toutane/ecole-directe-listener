@@ -3,8 +3,8 @@ import { AsyncStorage } from "react-native";
 
 import { UserContext } from "./userContext";
 
-// const url = "http://192.168.86.183:3000/api";
-const url = "https://edl-core.toutane.now.sh/api";
+const url = "http://192.168.86.183:3000/api";
+// const url = "https://edl-core.toutane.now.sh/api";
 
 const ListenContext = React.createContext();
 const { Provider } = ListenContext;

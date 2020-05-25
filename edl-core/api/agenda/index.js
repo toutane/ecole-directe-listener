@@ -44,8 +44,8 @@ async function fetchAgenda(query, tokenEd, res) {
 }
 
 async function sendNotification(query, value, res) {
-  let url = `https://edl-core.toutane.now.sh`;
-  // let url = `http://192.168.86.183:3000`;
+  // let url = `https://edl-core.toutane.now.sh`;
+  let url = `http://192.168.86.183:3000`;
   let response = await fetch(
     `${url}/api/notif?eleveId=${query.eleveId}&body=${value}`,
     {
