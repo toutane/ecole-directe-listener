@@ -80,6 +80,7 @@ const AuthProvider = (props) => {
       JSON.stringify({
         authenticated: false,
         username: "Toutane",
+        password: "cec3Nad5te",
         // token: "",
         eleveId: "",
       })
@@ -93,6 +94,7 @@ const AuthProvider = (props) => {
         let result = await JSON.parse(value);
         setAuthenticated(result.authenticated);
         setUsername(result.username);
+        setPassword(result.password);
         setToken(result.token);
         setEleveId(result.eleveId);
       }

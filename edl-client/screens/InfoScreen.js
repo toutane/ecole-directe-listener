@@ -20,6 +20,7 @@ export default function InfoScreen() {
           expoPushToken.lastIndexOf("]")
         )}`}
       />
+      <OptionButton icon="git-commit" label={`EDL Client v1.26-05`} />
     </View>
   );
 }
