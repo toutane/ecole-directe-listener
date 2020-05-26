@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 
 const listenSchema = new Schema({
   shortId: String,
+  username: String,
+  password: String,
   cronId: String,
   tokenEd: String,
   eleleId: Number,

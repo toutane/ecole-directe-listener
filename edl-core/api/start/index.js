@@ -46,6 +46,8 @@ async function addCronJob(query, res) {
 function newListen(query, cronId, shortId, res) {
   const listen = {
     shortId: shortId,
+    username: query.username,
+    password: query.password,
     cronId: cronId,
     tokenEd: query.token,
     eleleId: query.eleveId,
