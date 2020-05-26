@@ -62,7 +62,7 @@ export default function HomeScreen() {
               },
             ]}
           >
-            {error === " "
+            {error === "  "
               ? `You are ${!authenticated ? "not" : ""} authenticated ${
                   !authenticated ? "" : "with: " + username
                 }`

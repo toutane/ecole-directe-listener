@@ -19,6 +19,7 @@ const AuthProvider = (props) => {
   const {
     username,
     password,
+    token,
     setUsername,
     setPassword,
     setToken,
@@ -27,7 +28,7 @@ const AuthProvider = (props) => {
   } = useContext(UserContext);
 
   async function login() {
-    let data = `data={ "identifiant": "${username}", "motdepasse": "${password}" }`;
+    let data = `data={ "identifiant": "${username}", "motdepasse": "${password}", "token": "${token}" }`;
 
     await setLoading(true);
 
@@ -58,6 +59,7 @@ const AuthProvider = (props) => {
           JSON.stringify({
             authenticated: true,
             username: "Toutane",
+            password: "cec3Nad5te",
             token: result.token,
             eleveId: result.data.accounts[0].id,
           })
@@ -69,7 +71,7 @@ const AuthProvider = (props) => {
 
   function logout() {
     setAuthenticated("");
-    setToken("");
+    // setToken("");
     setEleveId("");
     setUsername("");
     setPassword("");
@@ -78,7 +80,7 @@ const AuthProvider = (props) => {
       JSON.stringify({
         authenticated: false,
         username: "Toutane",
-        token: "",
+        // token: "",
         eleveId: "",
       })
     );

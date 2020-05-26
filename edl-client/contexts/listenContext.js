@@ -14,7 +14,14 @@ const ListenProvider = (props) => {
     _retrieveData();
   }, []);
 
-  const { token, eleveId, expoPushToken, setError } = useContext(UserContext);
+  const {
+    username,
+    password,
+    token,
+    eleveId,
+    expoPushToken,
+    setError,
+  } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -26,7 +33,7 @@ const ListenProvider = (props) => {
   async function startListening() {
     setIsLoading(true);
     let response = await fetch(
-      `${url}/start?interval=${interval}&token=${token}&eleveId=${eleveId}&expoPushToken=${expoPushToken}`,
+      `${url}/start?interval=${interval}&token=${token}&eleveId=${eleveId}&username=${username}&password=${password}&expoPushToken=${expoPushToken}`,
       {
         method: "GET",
       }
