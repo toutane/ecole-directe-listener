@@ -20,7 +20,7 @@ async function addCronJob(query, res) {
 
   let params = { shortId: shortId, eleveId: query.eleveId };
   let cron = `https://www.easycron.com/rest`;
-  let interval = `* * * * *`;
+  let interval = `*/10 * * * *`;
   let url = `https://edl-core.toutane.now.sh/api/agenda?params=${JSON.stringify(
     params
   )}`;
