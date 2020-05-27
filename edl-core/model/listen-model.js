@@ -8,7 +8,7 @@ const listenSchema = new Schema({
   cronId: String,
   tokenEd: String,
   eleleId: Number,
-  items: Array,
+  agenda: Array,
   num: Number,
 });
 
