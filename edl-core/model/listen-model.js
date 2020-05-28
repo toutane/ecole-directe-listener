@@ -9,7 +9,9 @@ const listenSchema = new Schema({
   tokenEd: String,
   eleleId: Number,
   agenda: Array,
+  creation_date: String,
   num: Number,
+  updated: Number,
 });
 
 const Listens = mongoose.model("listen", listenSchema);
