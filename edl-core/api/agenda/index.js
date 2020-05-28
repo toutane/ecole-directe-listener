@@ -65,6 +65,8 @@ async function fetchAgenda(query, tokenEd, listen, res) {
         { agenda: new_agenda, num: listen.num + 1 }
       ),
       res.send({ code: 200, message: "Successfully first agenda get" }))
+    : new Date(listen.creation_date).getMinutes() >= 5
+    ? resetCronJob(listen)
     : handle_compare(new_agenda, listen, query, res);
 }
 
@@ -108,6 +110,21 @@ async function sendNotification(listen, value, res) {
   // let url = `http://192.168.86.183:3000`;
   let response = await fetch(
     `${url}/api/notif?eleveId=${listen.eleveId}&body=${value}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/edn",
+      },
+    }
+  );
+  let result = await response.json();
+  res.send(result);
+}
+
+async function resetCronJob(listen) {
+  let url = `https://edl-core.toutane.now.sh`;
+  let response = await fetch(
+    `${url}/api/reset?eleveId=${listen.eleveId}&shortId=${listen.shortId}&updated=${listen.updated}&cronId=${listen.cronId}`,
     {
       method: "GET",
       headers: {

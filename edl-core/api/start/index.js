@@ -52,7 +52,9 @@ function newListen(query, cronId, shortId, res) {
     tokenEd: query.token,
     eleleId: query.eleveId,
     agenda: [],
+    creation_date: Date.now(),
     num: 0,
+    updated: 0,
   };
   new Listens(listen).save((err, newListen) => {
     err
