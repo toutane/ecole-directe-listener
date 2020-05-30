@@ -1,53 +1,113 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import * as React from "react";
+import React, { useContext } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
-import TabBarIcon from "../components/TabBarIcon";
-import HomeScreen from "../screens/HomeScreen";
+import { ListenContext } from "../contexts/listenContext";
+
+import ListenScreen from "../screens/ListenScreen";
 import InfoScreen from "../screens/InfoScreen";
+import UserScreen from "../screens/UserScreen";
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = "Home";
+const INITIAL_ROUTE_NAME = "Listen";
 
-export default function BottomTabNavigator({ navigation, route }) {
-  // Set the header title on the parent stack navigator depending on the
-  // currently active tab. Learn more in the documentation:
-  // https://reactnavigation.org/docs/en/screen-options-resolution.html
-  navigation.setOptions({ headerTitle: getHeaderTitle(route) });
-
+function TabBar({ state, descriptors, navigation }) {
+  const { isListening } = useContext(ListenContext);
   return (
-    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
-      <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          title: "Listen",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="headphones" />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="Info"
-        component={InfoScreen}
-        options={{
-          title: "Info",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="info" />
-          ),
-        }}
-      />
+    <View
+      style={{
+        // backgroundColor:
+        //   state.index === 1 ? (!isListening ? "white" : "#68D391") : "white",
+        width: "100%",
+        height: 70,
+      }}
+    >
+      <View style={styles.tabBar}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+              ? options.title
+              : route.name;
+
+          const isFocused = state.index === index;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={onPress}
+              style={{ flex: 1, alignItems: "center", marginTop: 10 }}
+            >
+              <Feather
+                name={
+                  label === "Server"
+                    ? "hard-drive"
+                    : label === "User"
+                    ? "user"
+                    : "headphones"
+                }
+                size={25}
+                color={isFocused ? "#63B3ED" : "rgba(96,100,109, 0.5)"}
+                style={{ marginBottom: 5 }}
+              />
+              <Text
+                style={[
+                  styles.label,
+                  {
+                    color: isFocused ? "#63B3ED" : "rgba(96,100,109, 0.5)",
+                  },
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+export default function BottomTabNavigator() {
+  return (
+    <BottomTab.Navigator
+      initialRouteName={INITIAL_ROUTE_NAME}
+      tabBarOptions={{ activeTintColor: "#63B3ED" }}
+      tabBar={(props) => <TabBar {...props} />}
+    >
+      <BottomTab.Screen name="User" component={UserScreen} />
+      <BottomTab.Screen name="Listen" component={ListenScreen} />
+      <BottomTab.Screen name="Server" component={InfoScreen} />
     </BottomTab.Navigator>
   );
 }
 
-function getHeaderTitle(route) {
-  const routeName =
-    route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
-
-  switch (routeName) {
-    case "Home":
-      return "Start listening";
-    case "Info":
-      return "Your information";
-  }
-}
+const styles = StyleSheet.create({
+  label: { fontSize: 10, textAlign: "center" },
+  tabBar: {
+    flex: 1,
+    flexDirection: "row",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    backgroundColor: "white",
+    shadowOpacity: 0.1,
+    shadowRadius: 15,
+    shadowColor: "black",
+    shadowOffset: { width: 2, height: 2 },
+  },
+});
