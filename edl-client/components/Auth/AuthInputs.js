@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 
-import { AuthContext } from "../contexts/authContext";
-import { UserContext } from "../contexts/userContext";
+import { AuthContext } from "../../contexts/authContext";
+import { UserContext } from "../../contexts/userContext";
 
 export default function AuthInput() {
   const { login } = useContext(AuthContext);
   const { setError, setUsername, setPassword } = useContext(UserContext);
 
   return (
-    <View style={styles.container}>
+    <View>
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -18,7 +18,7 @@ export default function AuthInput() {
         onSubmitEditing={() => passwordInput.focus()}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { marginTop: 15 }]}
         placeholder="Password"
         returnKeyType="go"
         onChangeText={(e) => (setPassword(e), setError(" "))}
@@ -31,14 +31,11 @@ export default function AuthInput() {
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 30, alignItems: "center", marginTop: 20 },
   input: {
     height: 50,
-    width: 250,
     backgroundColor: "rgb(242, 242, 247)",
     borderRadius: 13,
     paddingHorizontal: 15,
-    marginTop: 15,
     fontSize: 18,
   },
   text: {

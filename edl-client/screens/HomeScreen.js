@@ -5,6 +5,7 @@ import {
   Button,
   ActivityIndicator,
   View,
+  SafeAreaView,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -13,9 +14,7 @@ import { UserContext } from "../contexts/userContext";
 import { ListenContext } from "../contexts/listenContext";
 import { PermissionsContext } from "../contexts/permissionsContext";
 
-import AuthInput from "../components/AuthInputs";
 import NotificationsAlert from "../components/NotificationsAlert";
-import ListeningView from "../components/ListeningView";
 
 export default function HomeScreen() {
   const { authenticated, loading, login, logout } = useContext(AuthContext);
@@ -24,7 +23,7 @@ export default function HomeScreen() {
   const { isNotificationsGranted } = useContext(PermissionsContext);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -69,18 +68,13 @@ export default function HomeScreen() {
               : error}
           </Text>
         </View>
-        {authenticated ? <ListeningView /> : <AuthInput />}
         {authenticated && !isNotificationsGranted ? (
           <NotificationsAlert />
         ) : null}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
-
-HomeScreen.navigationOptions = {
-  header: null,
-};
 
 const styles = StyleSheet.create({
   container: {
