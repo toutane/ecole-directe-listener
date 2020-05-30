@@ -107,7 +107,6 @@ function formatDate(date) {
 
 async function sendNotification(listen, value, res) {
   let url = `https://edl-core.toutane.now.sh`;
-  // let url = `http://192.168.86.183:3000`;
   let response = await fetch(
     `${url}/api/notif?eleveId=${listen.eleveId}&body=${value}`,
     {

@@ -13,7 +13,7 @@ module.exports = (req, res) => {
 };
 
 async function getListenData(query, res) {
-  await Listens.find({ eleveId: query.eleleId }).then((data) => {
+  await Listens.find({ eleveId: query.eleveId }).then((data) => {
     res.send(data[0]);
   });
 }

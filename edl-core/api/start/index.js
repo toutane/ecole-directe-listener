@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const shortid = require("shortid-36");
 
 const keys = require("../../.config/keys");
+
 import { token } from "../../.config/APItoken";
 
 const Listens = require("../../model/listen-model");
@@ -50,7 +51,7 @@ function newListen(query, cronId, shortId, res) {
     password: query.password,
     cronId: cronId,
     tokenEd: query.token,
-    eleleId: query.eleveId,
+    eleveId: query.eleveId,
     agenda: [],
     creation_date: Date.now(),
     num: 0,
