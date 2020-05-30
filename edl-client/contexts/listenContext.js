@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { AsyncStorage } from "react-native";
 
 import { UserContext } from "./userContext";
+import { LogsContext } from "./logsContext";
 
 // const url = "http://192.168.86.183:3000/api";
 const url = "https://edl-core.toutane.now.sh/api";
@@ -12,6 +13,13 @@ const { Provider } = ListenContext;
 const ListenProvider = (props) => {
   useEffect(() => {
     _retrieveData();
+    // AsyncStorage.setItem(
+    //   "listen",
+    //   JSON.stringify({
+    //     isListening: false,
+    //     listenItem: { cronId: "" },
+    //   })
+    // );
   }, []);
 
   const {
@@ -22,13 +30,14 @@ const ListenProvider = (props) => {
     expoPushToken,
     setError,
   } = useContext(UserContext);
+  const { newLog, setLogs } = useContext(LogsContext);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
   const [listenItem, setListenItem] = useState({ cronId: "" });
 
-  const [interval, setInterval] = useState(1);
+  const [interval, setIntervalNum] = useState("10");
 
   async function startListening() {
     setIsLoading(true);
@@ -54,12 +63,15 @@ const ListenProvider = (props) => {
               }
             ),
           })
-        ))
-      : (setIsListening(false), setError(result.error.message));
+        ),
+        newLog("start", result))
+      : (setIsListening(false),
+        setError(result.error.message),
+        newLog("start", result));
     setIsLoading(false);
   }
 
-  async function stopListening(cronId) {
+  async function stopListening(cronId, item) {
     setIsLoading(true);
     let response = await fetch(`${url}/stop?id=${cronId}`, {
       method: "GET",
@@ -74,8 +86,9 @@ const ListenProvider = (props) => {
             isListening: false,
             listenItem: { cronId: "" },
           })
-        ))
-      : setError(result.error);
+        ),
+        newLog("stop", result, item))
+      : (setError(result.error), newLog("stop", result, item));
     setIsLoading(false);
     setListenItem({ cronId: "" });
     setError(" ");
@@ -89,7 +102,7 @@ const ListenProvider = (props) => {
     let result = await response.json();
     setListenItem(result);
     setIsLoading(false);
-    isForStop ? stopListening(result.cronId) : null;
+    isForStop ? stopListening(result.cronId, result) : null;
   }
 
   const _retrieveData = async () => {
@@ -108,6 +121,8 @@ const ListenProvider = (props) => {
   return (
     <Provider
       value={{
+        interval,
+        setIntervalNum,
         listenItem,
         isLoading,
         isListening,
