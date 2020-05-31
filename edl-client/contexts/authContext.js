@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, AppState } from "react-native";
 
 import { UserContext } from "./userContext";
 
@@ -12,6 +12,8 @@ const AuthProvider = (props) => {
   useEffect(() => {
     _retrieveData();
   }, []);
+
+  const [appState, setAppState] = useState(AppState.currentState);
 
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -104,7 +106,9 @@ const AuthProvider = (props) => {
   };
 
   return (
-    <Provider value={{ authenticated, loading, login, logout }}>
+    <Provider
+      value={{ authenticated, loading, login, logout, appState, setAppState }}
+    >
       {props.children}
     </Provider>
   );

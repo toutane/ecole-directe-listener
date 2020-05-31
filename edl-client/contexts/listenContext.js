@@ -37,7 +37,7 @@ const ListenProvider = (props) => {
 
   const [listenItem, setListenItem] = useState({ cronId: "" });
 
-  const [interval, setIntervalNum] = useState("10");
+  const [interval, setIntervalNum] = useState(`*/10 * * * *`);
 
   async function startListening() {
     setIsLoading(true);
