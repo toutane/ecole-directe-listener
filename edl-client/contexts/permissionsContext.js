@@ -2,12 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import * as Permissions from "expo-permissions";
 import { Notifications } from "expo";
 import { AppState } from "react-native";
+import { AuthContext } from "./authContext";
 
 const PermissionsContext = React.createContext();
 const { Provider } = PermissionsContext;
 
 const PermissionsProvider = (props) => {
-  const [appState, setAppState] = useState(AppState.currentState);
+  const { appState, setAppState } = useContext(AuthContext);
   const [isNotificationsGranted, setIsNotificationsGranted] = useState(false);
 
   useEffect(() => {

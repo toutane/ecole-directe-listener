@@ -1,13 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { deployementId, buildId, bearerToken } from "../config/vercel-keys";
+import { AuthContext } from "./authContext";
 
 const LogsContext = React.createContext();
 const { Provider } = LogsContext;
 
 const LogsProvider = (props) => {
+  const { appState } = useContext(AuthContext);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLogsLoading, setIsLogsLoading] = useState(false);
+
   const [logs, setLogs] = useState([]);
+  const [buildLogs, setBuildLogs] = useState([]);
+  const [serverStatus, setServerStatus] = useState([]);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  async function onRefresh() {
+    setRefreshing(true);
+    let url = `https://api.vercel.com`;
+    let response = await fetch(`${url}/v7/now/deployments/${deployementId}`, {
+      method: "GET",
+      headers: { authorization: `bearer ${bearerToken}` },
+    }).then(setRefreshing(false));
+    let result = await response.json();
+    result.error === undefined
+      ? setServerStatus(result)
+      : console.log(result.error);
+  }
+
+  useEffect(() => {
+    async function getServerStatus() {
+      setIsLoading(true);
+      let url = `https://api.vercel.com`;
+      let response = await fetch(`${url}/v7/now/deployments/${deployementId}`, {
+        method: "GET",
+        headers: { authorization: `bearer ${bearerToken}` },
+      });
+      let result = await response.json();
+      result.error === undefined
+        ? setServerStatus(result)
+        : console.log(result.error);
+      setIsLoading(false);
+    }
+    getServerStatus();
+  }, [appState]);
+
+  useEffect(() => {
+    async function getBuildLogs() {
+      setIsLogsLoading(true);
+      let url = `https://api.vercel.com`;
+      let response = await fetch(
+        `${url}/v2/now/deployments/${deployementId}/events?name=${buildId}`,
+        {
+          method: "GET",
+          headers: { authorization: `bearer ${bearerToken}` },
+        }
+      );
+
+      let result = await response.json();
+      result.error === undefined
+        ? setBuildLogs(result)
+        : console.log(result.error);
+      setIsLogsLoading(false);
+    }
+    getBuildLogs();
+  }, []);
 
   async function newLog(type, payload, item) {
-    // console.log(item);
     setLogs((prvState) =>
       prvState.concat(
         type === "start"
@@ -47,7 +108,21 @@ const LogsProvider = (props) => {
   }
 
   return (
-    <Provider value={{ logs, setLogs, newLog }}>{props.children}</Provider>
+    <Provider
+      value={{
+        isLoading,
+        logs,
+        setLogs,
+        newLog,
+        buildLogs,
+        serverStatus,
+        isLogsLoading,
+        refreshing,
+        onRefresh,
+      }}
+    >
+      {props.children}
+    </Provider>
   );
 };
 
