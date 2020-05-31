@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
 import { ListenContext } from "../../../contexts/listenContext";
@@ -10,11 +10,15 @@ export default function IntervalButton() {
       style={styles.button}
       onPress={() =>
         setIntervalNum((prvNum) =>
-          prvNum === "10" ? "15" : prvNum === "15" ? "5" : "10"
+          prvNum === "*/10 * * * *"
+            ? "*/15 * * * *"
+            : prvNum === "*/15 * * * *"
+            ? "*/5 * * * *"
+            : "*/10 * * * *"
         )
       }
     >
-      <Text style={styles.num}>{interval}</Text>
+      <Text style={styles.num}>{interval.slice(2, -8)}</Text>
     </TouchableOpacity>
   );
 }

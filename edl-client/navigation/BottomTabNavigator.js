@@ -6,11 +6,11 @@ import { Feather } from "@expo/vector-icons";
 import { ListenContext } from "../contexts/listenContext";
 
 import ListenScreen from "../screens/ListenScreen";
-import InfoScreen from "../screens/InfoScreen";
+import ServerScreen from "../screens/ServerScreen";
 import UserScreen from "../screens/UserScreen";
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = "Listen";
+const INITIAL_ROUTE_NAME = "Server";
 
 function TabBar({ state, descriptors, navigation }) {
   const { isListening } = useContext(ListenContext);
@@ -92,7 +92,7 @@ export default function BottomTabNavigator() {
     >
       <BottomTab.Screen name="User" component={UserScreen} />
       <BottomTab.Screen name="Listen" component={ListenScreen} />
-      <BottomTab.Screen name="Server" component={InfoScreen} />
+      <BottomTab.Screen name="Server" component={ServerScreen} />
     </BottomTab.Navigator>
   );
 }
