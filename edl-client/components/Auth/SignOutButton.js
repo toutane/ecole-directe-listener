@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
-import { View, TouchableOpacity } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { StyleSheet, TouchableOpacity, Text } from "react-native";
 
 import { AuthContext } from "../../contexts/authContext";
 import { ListenContext } from "../../contexts/listenContext";
@@ -12,12 +11,29 @@ export default function SignOutButton() {
   const { isListening } = useContext(ListenContext);
   return (
     <TouchableOpacity
-      style={{ justifyContent: "center", alignItems: "center" }}
+      style={styles.button}
       onPress={() =>
         isListening ? setError("Please stop listening to logout") : logout()
       }
     >
-      <Feather name="log-out" size={20} color="rgba(96,100,109, 0.5)" />
+      <Text style={styles.textButton}>Sign Out</Text>
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    height: 50,
+    width: 250,
+    borderRadius: 13,
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    alignItems: "center",
+    shadowOpacity: 0.05,
+    shadowRadius: 15,
+    shadowColor: "black",
+    shadowOffset: { width: 2, height: 2 },
+  },
+  textButton: { fontSize: 17, color: "#E53E3E", fontWeight: "500" },
+});
