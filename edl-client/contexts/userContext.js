@@ -13,6 +13,8 @@ const UserProvider = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [userData, setUserData] = useState({});
+
   const [error, setError] = useState(" ");
 
   useEffect(() => {
@@ -25,6 +27,8 @@ const UserProvider = (props) => {
   return (
     <Provider
       value={{
+        userData,
+        setUserData,
         username,
         password,
         token,

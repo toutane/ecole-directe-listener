@@ -19,6 +19,7 @@ const AuthProvider = (props) => {
   const [loading, setLoading] = useState(false);
 
   const {
+    setUserData,
     username,
     password,
     token,
@@ -52,6 +53,7 @@ const AuthProvider = (props) => {
             result.token.length - 10
           )} `
         ),
+        setUserData(result),
         setAuthenticated(true),
         setLoading(false),
         setToken(result.token),
@@ -61,6 +63,7 @@ const AuthProvider = (props) => {
           JSON.stringify({
             authenticated: true,
             username: username,
+            userData: result,
             password: password,
             token: result.token,
             eleveId: result.data.accounts[0].id,
@@ -74,6 +77,7 @@ const AuthProvider = (props) => {
   function logout() {
     setAuthenticated("");
     // setToken("");
+    setUserData(null);
     setEleveId("");
     setUsername("");
     setPassword("");
@@ -82,6 +86,7 @@ const AuthProvider = (props) => {
       JSON.stringify({
         authenticated: false,
         username: "",
+        userData: null,
         password: "",
         token: "",
         eleveId: "",
@@ -96,6 +101,7 @@ const AuthProvider = (props) => {
         let result = await JSON.parse(value);
         setAuthenticated(result.authenticated);
         setUsername(result.username);
+        setUserData(result.result);
         setPassword(result.password);
         setToken(result.token);
         setEleveId(result.eleveId);
