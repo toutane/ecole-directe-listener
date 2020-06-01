@@ -4,29 +4,19 @@ import { Feather } from "@expo/vector-icons";
 
 import { UserContext } from "../../contexts/userContext";
 
-import SignOutButton from "../Auth/SignOutButton";
-
 export default function UserActionsView() {
   const { username } = useContext(UserContext);
   return (
-    <View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text style={styles.title}>{`Hey ${username},`}</Text>
-        <SignOutButton />
-      </View>
+    <View style={styles.container}>
+      <Text style={styles.title}>{`👋 ${username}`}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: { marginTop: 10 },
   title: {
-    fontSize: 20,
+    fontSize: 34,
     fontWeight: "700",
   },
 });
