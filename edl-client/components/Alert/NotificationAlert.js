@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import {
-  View,
+  Dimensions,
   Linking,
   TouchableOpacity,
   Text,
@@ -28,12 +28,13 @@ export default function NotificationAlert() {
 
 const styles = StyleSheet.create({
   alert: {
+    width: 300,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FBD38D",
-    height: 100,
     borderRadius: 20,
     paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   text: { color: "#C05621", fontSize: 15, flexShrink: 10 },
   icon: { color: "#C05621", marginRight: 15 },

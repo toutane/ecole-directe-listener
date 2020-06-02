@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     backgroundColor: "#fff",
-    borderRadius: 30,
+    borderRadius: 25,
     shadowOpacity: 0.1,
     shadowRadius: 15,
     shadowColor: "black",

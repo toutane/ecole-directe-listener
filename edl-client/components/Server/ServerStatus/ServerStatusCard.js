@@ -7,7 +7,7 @@ import { LogsContext } from "../../../contexts/logsContext";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function ServerStatusCard() {
-  const { isLoading, serverStatus } = useContext(LogsContext);
+  const { isLoading, serverStatus, isLogsLoading } = useContext(LogsContext);
   let date = new Date(serverStatus.createdAt),
     month = "" + date.getMonth(),
     day = "" + date.getDay(),
@@ -26,8 +26,11 @@ export default function ServerStatusCard() {
         styles.card,
         {
           alignItems: isLoading ? "center" : "flex-start",
-          borderColor:
-            serverStatus.readyState === "READY" ? "#68D391" : "#E53E3E",
+          borderColor: isLogsLoading
+            ? "rgba(96,100,109, 0.2)"
+            : serverStatus.readyState === "READY"
+            ? "#68D391"
+            : "#E53E3E",
         },
       ]}
     >
@@ -77,12 +80,8 @@ export default function ServerStatusCard() {
             </TouchableOpacity>
           </View>
           <View style={{ marginTop: 10 }}>
-            <Text style={styles.title}>CREATE AT</Text>
-            <View style={{ marginTop: 5 }} />
-            <Text style={[styles.text, { marginTop: 5 }]}>
-              {" "}
-              {`On ${created_date}`}
-            </Text>
+            <Text style={styles.title}>CREATE ON</Text>
+            <Text style={[styles.text, { marginTop: 5 }]}>{created_date}</Text>
           </View>
         </View>
       ) : (
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     backgroundColor: "#fff",
-    borderRadius: 30,
+    borderRadius: 25,
     shadowOpacity: 0.1,
     shadowRadius: 15,
     shadowColor: "black",

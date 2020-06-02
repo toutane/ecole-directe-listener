@@ -20,7 +20,13 @@ export default function ServerLogsCard() {
           styles.card,
           {
             borderColor:
-              serverStatus.readyState === "READY" ? "#68D391" : "#E53E3E",
+              buildLogs.length == 0
+                ? "rgba(96,100,109, 0.2)"
+                : isLogsLoading
+                ? "rgba(96,100,109, 0.2)"
+                : serverStatus.readyState === "READY"
+                ? "#68D391"
+                : "#E53E3E",
           },
         ]}
       >
@@ -63,7 +69,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     backgroundColor: "#fff",
-    borderRadius: 30,
+    borderRadius: 25,
     shadowOpacity: 0.1,
     shadowRadius: 15,
     shadowColor: "black",
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   scrollView: {
-    borderRadius: 30,
+    borderRadius: 25,
     height: 400,
   },
   text: {
@@ -82,11 +88,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
   },
-  infoText: { color: "rgba(96,100,109, 0.4)", fontSize: 20, fontWeight: "600" },
+  infoText: { color: "rgba(96,100,109, 0.2)", fontSize: 17, fontWeight: "500" },
   overlay: {
+    right: -2,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 30,
+    borderRadius: 25,
     width: 300,
     height: 300,
     backgroundColor: "rgba(0, 0, 0, 0.1)",

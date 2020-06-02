@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, TouchableOpacity, Text, Dimensions } from "react-native";
+import { StyleSheet, TouchableOpacity, Text } from "react-native";
 
 import { AuthContext } from "../../contexts/authContext";
 import { ListenContext } from "../../contexts/listenContext";
@@ -23,7 +23,8 @@ export default function SignOutButton() {
 
 const styles = StyleSheet.create({
   button: {
-    width: Dimensions.get("window").width - 40,
+    marginTop: 20,
+    width: 300,
     height: 50,
     borderRadius: 15,
     backgroundColor: "white",

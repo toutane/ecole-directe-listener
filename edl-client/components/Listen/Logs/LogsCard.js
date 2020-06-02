@@ -16,7 +16,7 @@ export default function LogsCard() {
         style={[
           styles.card,
           {
-            borderColor: !isListening ? "#68D391" : "#E53E3E",
+            borderColor: !isListening ? "rgba(96,100,109, 0.2)" : "#E53E3E",
           },
         ]}
       >
@@ -24,6 +24,10 @@ export default function LogsCard() {
           style={[styles.scrollView]}
           scrollEnabled={isListening}
           showsVerticalScrollIndicator={false}
+          maximumZoomScale={1.001}
+          minimumZoomScale={1}
+          zoomScale={0}
+          bouncesZoom={true}
         >
           {logs.map((log, i) => (
             <Line key={i} log={log} />
@@ -43,7 +47,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 400,
     backgroundColor: "#fff",
-    borderRadius: 30,
+    borderRadius: 25,
     shadowOpacity: 0.1,
     shadowRadius: 15,
     shadowColor: "black",
@@ -54,7 +58,7 @@ const styles = StyleSheet.create({
   overlay: {
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 30,
+    borderRadius: 25,
     width: 300,
     height: 400,
     backgroundColor: "rgba(0, 0, 0, 0.1)",
@@ -62,7 +66,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   scrollView: {
-    borderRadius: 30,
+    borderRadius: 25,
     height: 400,
   },
 });
