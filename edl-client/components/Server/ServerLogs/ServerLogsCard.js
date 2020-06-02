@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   ActivityIndicator,
-  RefreshControl,
 } from "react-native";
 
 import { LogsContext } from "../../../contexts/logsContext";
@@ -13,13 +12,7 @@ import { LogsContext } from "../../../contexts/logsContext";
 import Line from "./Line";
 
 export default function ServerLogsCard() {
-  const {
-    serverStatus,
-    buildLogs,
-    isLogsLoading,
-    onRefresh,
-    refreshing,
-  } = useContext(LogsContext);
+  const { serverStatus, buildLogs, isLogsLoading } = useContext(LogsContext);
   return (
     <View style={{ marginTop: 20 }}>
       <View
@@ -33,9 +26,6 @@ export default function ServerLogsCard() {
       >
         {!isLogsLoading ? (
           <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
             onEndReachedThreshold={0}
             style={[styles.scrollView]}
             showsVerticalScrollIndicator={false}
@@ -44,7 +34,9 @@ export default function ServerLogsCard() {
             zoomScale={0}
             bouncesZoom={true}
           >
-            <Text style={styles.text}>Last build logs:</Text>
+            {buildLogs.length !== 0 && (
+              <Text style={styles.text}>Last build logs:</Text>
+            )}
             {buildLogs.map((log, i) => (
               <Line
                 key={i}
@@ -56,6 +48,11 @@ export default function ServerLogsCard() {
           </ScrollView>
         ) : (
           <ActivityIndicator size="large" />
+        )}
+        {buildLogs.length === 0 && (
+          <View style={styles.overlay}>
+            <Text style={styles.infoText}>No logs to show</Text>
+          </View>
         )}
       </View>
     </View>
@@ -84,5 +81,16 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     fontSize: 15,
     fontWeight: "600",
+  },
+  infoText: { color: "rgba(96,100,109, 0.4)", fontSize: 20, fontWeight: "600" },
+  overlay: {
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 30,
+    width: 300,
+    height: 300,
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    zIndex: 1,
+    position: "absolute",
   },
 });
