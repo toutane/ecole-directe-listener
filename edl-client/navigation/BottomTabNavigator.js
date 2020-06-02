@@ -10,10 +10,9 @@ import ServerScreen from "../screens/ServerScreen";
 import UserScreen from "../screens/UserScreen";
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = "User";
+const INITIAL_ROUTE_NAME = "Listen";
 
 function TabBar({ state, descriptors, navigation }) {
-  const { isListening } = useContext(ListenContext);
   return (
     <View
       style={{
