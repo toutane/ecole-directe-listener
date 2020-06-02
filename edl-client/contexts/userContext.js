@@ -13,7 +13,10 @@ const UserProvider = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({
+    username: "",
+    profile: { classe: {} },
+  });
 
   const [error, setError] = useState(" ");
 

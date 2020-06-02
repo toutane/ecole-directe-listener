@@ -15,21 +15,6 @@ const LogsProvider = (props) => {
   const [buildLogs, setBuildLogs] = useState([]);
   const [serverStatus, setServerStatus] = useState([]);
 
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  async function onRefresh() {
-    setRefreshing(true);
-    let url = `https://api.vercel.com`;
-    let response = await fetch(`${url}/v7/now/deployments/${deployementId}`, {
-      method: "GET",
-      headers: { authorization: `bearer ${bearerToken}` },
-    }).then(setRefreshing(false));
-    let result = await response.json();
-    result.error === undefined
-      ? setServerStatus(result)
-      : console.log(result.error);
-  }
-
   useEffect(() => {
     async function getServerStatus() {
       setIsLoading(true);
@@ -66,7 +51,7 @@ const LogsProvider = (props) => {
       setIsLogsLoading(false);
     }
     getBuildLogs();
-  }, []);
+  }, [appState]);
 
   async function newLog(type, payload, item) {
     setLogs((prvState) =>
@@ -117,8 +102,6 @@ const LogsProvider = (props) => {
         buildLogs,
         serverStatus,
         isLogsLoading,
-        refreshing,
-        onRefresh,
       }}
     >
       {props.children}
