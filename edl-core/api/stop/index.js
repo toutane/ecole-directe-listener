@@ -17,23 +17,29 @@ module.exports = (req, res) => {
 async function deleteCronJob(query, res) {
   let cron = `https://www.easycron.com/rest`;
 
-  let response = await fetch(`${cron}/delete?token=${token}&id=${query.id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/edn",
-    },
-  });
-  let result = await response.json();
-  deleteListen(query, res, result);
+  async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  }
+  asyncForEach(JSON.parse(query.ids), async (id) => {
+    await fetch(`${cron}/delete?token=${token}&id=${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/edn",
+      },
+    });
+  }).then(() => deleteListen(query, res));
 }
 
-function deleteListen(query, res, result) {
-  Listens.findOneAndDelete({ cronId: query.id }, (err) => {
+function deleteListen(query, res) {
+  Listens.findOneAndDelete({ cronIds: JSON.parse(query.ids) }, (err) => {
     err
       ? res.send({
           status: "error",
           error: `There was an error`,
+          code: 404,
         })
-      : res.send(result);
+      : res.send({ code: 200, message: "succeed deletions" });
   });
 }
