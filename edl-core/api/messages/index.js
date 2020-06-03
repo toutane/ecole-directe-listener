@@ -40,7 +40,7 @@ async function fetchChanges(token, item, res) {
   let url = "https://api.ecoledirecte.com";
   let data = `data= { "token": "${token}" }`;
 
-  let first_messages = [];
+  let new_messages = [];
 
   await fetch(
     `${url}/v3/eleves/${item.eleveId}/messages.awp?verbe=getall&typeRecuperation=received&orderBy=date&order=desc&page=0&itemsPerPage=20&onlyRead=&query=&idClasseur=0`,
@@ -55,7 +55,7 @@ async function fetchChanges(token, item, res) {
     .then((messages) => messages.json())
     .then((result) =>
       result.data.messages.received.forEach((element) =>
-        first_messages.push(element)
+        new_messages.push(element)
       )
     );
 
@@ -63,9 +63,44 @@ async function fetchChanges(token, item, res) {
     ? Listens.updateOne(
         { shortId: item.shortId },
         {
-          messages: first_messages,
+          messages: new_messages,
           num: 1,
         }
       ).then(() => res.send({ code: 200, message: `First messages GET` }))
-    : res.send("not first fetch for messages");
+    : compareMessages(new_messages, item, res);
+
+  // res.send("not first fetch for messages");
+}
+
+async function compareMessages(new_messages, item, res) {
+  item.messages.length !== new_messages.length
+    ? (await Listens.updateOne(
+        { shortId: item.shortId },
+        { messages: new_messages, num: item.num + 1 }
+      ),
+      sendNotification(
+        item,
+        `You have a new message! (fetch number:${item.num + 1})`,
+        res
+      ))
+    : (await Listens.updateOne(
+        { shortId: item.shortId },
+        { messages: new_messages, num: item.num + 1 }
+      ),
+      res.send({ code: 200, message: "No new message" }));
+}
+
+async function sendNotification(item, value, res) {
+  let url = `https://edl-core.toutane.now.sh`;
+  let response = await fetch(
+    `${url}/api/notif?eleveId=${item.eleveId}&body=${value}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/edn",
+      },
+    }
+  );
+  let result = await response.json();
+  res.send(result);
 }
