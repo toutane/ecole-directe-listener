@@ -20,40 +20,67 @@ async function addCronJob(query, res) {
   let shortId = shortid.generate();
 
   let params = { shortId: shortId, eleveId: query.eleveId };
+  let cron_job_ids = [];
+
   let cron = `https://www.easycron.com/rest`;
-  let interval = `*/10 * * * *`;
-  let url = `https://edl-core.toutane.now.sh/api/agenda?params=${JSON.stringify(
+
+  let agenda = `https://edl-core.toutane.now.sh/api/agenda?params=${JSON.stringify(
     params
   )}`;
-  // let url = `http://192.168.86.183:3000/api/agenda?params=${JSON.stringify(
-  //   params
-  // )}`;
 
-  let response = await fetch(
-    `${cron}/add?token=${token}&cron_job_name=cron_of_${query.eleveId}&cron_expression=${interval}&url=${url}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/edn",
-      },
+  let messages = `https://edl-core.toutane.now.sh/api/messages?params=${JSON.stringify(
+    params
+  )}`;
+
+  let notes = `https://edl-core.toutane.now.sh/api/notes?params=${JSON.stringify(
+    params
+  )}`;
+
+  async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
     }
+  }
+  asyncForEach(JSON.parse(query.fetchOn), async (type) => {
+    await fetch(
+      `${cron}/add?token=${token}&cron_job_name=cron_of_${
+        query.eleveId
+      }&cron_expression=${query.interval}&url=${
+        type === "agenda" ? agenda : type === "messages" ? messages : notes
+      }`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/edn",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((result) =>
+        result.status === "success"
+          ? cron_job_ids.push(result.cron_job_id)
+          : res.send(result)
+      );
+  }).then(() =>
+    cron_job_ids.length === JSON.parse(query.fetchOn).length
+      ? newListen(query, cron_job_ids, shortId, res)
+      : res.send("there was an error (start listening)")
   );
-  let result = await response.json();
-  result.status === "success"
-    ? newListen(query, result.cron_job_id, shortId, res)
-    : res.send(result);
 }
 
-function newListen(query, cronId, shortId, res) {
+function newListen(query, cronIds, shortId, res) {
   const listen = {
     shortId: shortId,
     username: query.username,
     password: query.password,
-    cronId: cronId,
+    cronIds: cronIds,
     tokenEd: query.token,
     eleveId: query.eleveId,
     agenda: [],
-    creation_date: Date.now(),
+    messages: [],
+    notes: [],
+    creation_date: new Date(),
+    lastUpdate_date: new Date(),
     num: 0,
     updated: 0,
   };
@@ -65,7 +92,7 @@ function newListen(query, cronId, shortId, res) {
         })
       : res.send({
           status: "success",
-          cron_job_id: cronId,
+          cron_job_ids: cronIds,
         });
   });
 }
