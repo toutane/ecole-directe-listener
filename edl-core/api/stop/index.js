@@ -16,7 +16,7 @@ module.exports = (req, res) => {
 
 async function deleteCronJob(query, res) {
   let cron = `https://www.easycron.com/rest`;
-
+  // res.send(JSON.parse(query.ids));
   async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
       await callback(array[index], index, array);
@@ -40,6 +40,6 @@ function deleteListen(query, res) {
           error: `There was an error`,
           code: 404,
         })
-      : res.send({ code: 200, message: "succeed deletions" });
+      : res.send({ status: "success", message: "Succeed deletions" });
   });
 }

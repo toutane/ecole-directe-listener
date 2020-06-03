@@ -68,12 +68,12 @@ async function addCronJob(query, res) {
   );
 }
 
-function newListen(query, cronIds, shortId, res) {
+function newListen(query, cron_job_ids, shortId, res) {
   const listen = {
     shortId: shortId,
     username: query.username,
     password: query.password,
-    cronIds: cronIds,
+    cronIds: cron_job_ids,
     tokenEd: query.token,
     eleveId: query.eleveId,
     agenda: [],
@@ -92,7 +92,7 @@ function newListen(query, cronIds, shortId, res) {
         })
       : res.send({
           status: "success",
-          cron_job_ids: cronIds,
+          cron_job_ids: newListen.cronIds,
         });
   });
 }

@@ -54,7 +54,7 @@ async function fetchChanges(token, item, res) {
       result.data.notes.forEach((element) => first_notes.push(element))
     );
 
-  Listens.notes.length === 0
+  item.notes.length === 0
     ? Listens.updateOne(
         { shortId: item.shortId },
         {

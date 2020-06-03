@@ -59,7 +59,7 @@ async function fetchChanges(token, item, res) {
       )
     );
 
-  Listens.messages.length === 0
+  item.messages.length === 0
     ? Listens.updateOne(
         { shortId: item.shortId },
         {
