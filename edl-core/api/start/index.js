@@ -71,6 +71,8 @@ async function addCronJob(query, res) {
 function newListen(query, cron_job_ids, shortId, res) {
   const listen = {
     shortId: shortId,
+    interval: query.interval,
+    fetchOn: query.fetchOn,
     username: query.username,
     password: query.password,
     cronIds: cron_job_ids,
