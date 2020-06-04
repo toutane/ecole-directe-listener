@@ -17,7 +17,7 @@ const ListenProvider = (props) => {
     //   "listen",
     //   JSON.stringify({
     //     isListening: false,
-    //     listenItem: { cronId: "" },
+    //     listenItem: { cronIds: [""] },
     //   })
     // );
   }, []);
@@ -35,14 +35,16 @@ const ListenProvider = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
-  const [listenItem, setListenItem] = useState({ cronId: "" });
+  const [listenItem, setListenItem] = useState({ cronIds: [""] });
 
   const [interval, setIntervalNum] = useState(`*/10 * * * *`);
+  // const [fetchOn, setFetchOn] = useState('["messages", "notes"]');
+  const [fetchOn, setFetchOn] = useState('["messages", "agenda"]');
 
   async function startListening() {
     setIsLoading(true);
     let response = await fetch(
-      `${url}/start?interval=${interval}&token=${token}&eleveId=${eleveId}&username=${username}&password=${password}&expoPushToken=${expoPushToken}`,
+      `${url}/start?interval=${interval}&token=${token}&eleveId=${eleveId}&username=${username}&password=${password}&expoPushToken=${expoPushToken}&fetchOn=${fetchOn}`,
       {
         method: "GET",
       }
@@ -51,7 +53,7 @@ const ListenProvider = (props) => {
     let result = await response.json();
     result.status === "success"
       ? (setIsListening(true),
-        setListenItem(Object.assign({}, { cronId: result.cron_job_id })),
+        setListenItem(Object.assign({}, { cronIds: result.cron_job_ids })),
         AsyncStorage.setItem(
           "listen",
           JSON.stringify({
@@ -59,7 +61,7 @@ const ListenProvider = (props) => {
             listenItem: Object.assign(
               {},
               {
-                cronId: result.cron_job_id,
+                cronIds: result.cron_job_ids,
               }
             ),
           })
@@ -71,9 +73,9 @@ const ListenProvider = (props) => {
     setIsLoading(false);
   }
 
-  async function stopListening(cronId, item) {
+  async function stopListening(cronIds, item) {
     setIsLoading(true);
-    let response = await fetch(`${url}/stop?id=${cronId}`, {
+    let response = await fetch(`${url}/stop?ids=${JSON.stringify(cronIds)}`, {
       method: "GET",
     });
 
@@ -84,13 +86,13 @@ const ListenProvider = (props) => {
           "listen",
           JSON.stringify({
             isListening: false,
-            listenItem: { cronId: "" },
+            listenItem: { cronIds: [""] },
           })
         ),
         newLog("stop", result, item))
       : (setError(result.error), newLog("stop", result, item));
     setIsLoading(false);
-    setListenItem({ cronId: "" });
+    setListenItem({ cronIds: [""] });
     setError(" ");
   }
 
@@ -102,7 +104,7 @@ const ListenProvider = (props) => {
     let result = await response.json();
     setListenItem(result);
     setIsLoading(false);
-    isForStop ? stopListening(result.cronId, result) : null;
+    isForStop ? stopListening(result.cronIds, result) : null;
   }
 
   const _retrieveData = async () => {

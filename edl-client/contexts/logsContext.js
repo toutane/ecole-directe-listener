@@ -67,7 +67,7 @@ const LogsProvider = (props) => {
                 message: "Start listening",
                 text:
                   payload.status === "success"
-                    ? `↪ Cron Id: ${payload.cron_job_id} `
+                    ? `↪ Cron Ids: ${payload.cron_job_ids.toString()} `
                     : payload.message,
               },
             ]
@@ -82,7 +82,11 @@ const LogsProvider = (props) => {
                 message: "Stop listening",
                 text:
                   payload.status === "success"
-                    ? `↪ Cron Id: ${item.cronId}\n↪ Short Id: ${item.shortId}\n↪ ${item.num} fetch(s)\n↪ Updated: ${item.updated} time(s)`
+                    ? `↪ Cron Ids: ${item.cronIds.toString()}\n↪ Short Id: ${
+                        item.shortId
+                      }\n↪ ${item.num} fetch(s)\n↪ Updated: ${
+                        item.updated
+                      } time(s)`
                     : payload.message,
               },
               { code: 111, index: 0 },
