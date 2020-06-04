@@ -3,13 +3,18 @@ const Schema = mongoose.Schema;
 
 const listenSchema = new Schema({
   shortId: String,
+  interval: String,
+  fetchOn: Array,
   username: String,
   password: String,
-  cronId: String,
+  cronIds: Array,
   tokenEd: String,
   eleveId: Number,
   agenda: Array,
+  messages: Array,
+  notes: Array,
   creation_date: String,
+  lastUpdate_date: String,
   num: Number,
   updated: Number,
 });
