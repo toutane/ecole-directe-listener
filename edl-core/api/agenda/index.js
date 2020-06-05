@@ -12,17 +12,18 @@ module.exports = (req, res) => {
   getListen(req.query, res);
 };
 
+// Get current listening item from mongo
 async function getListen(query, res) {
   let params = JSON.parse(query.params);
   Listens.find({ shortId: params.shortId }).then((data) => {
-    login(params, data[0].username, data[0].password, data[0], res);
+    login(data[0].username, data[0].password, data[0], res);
   });
 }
 
-async function login(params, username, password, listen, res) {
+// Login to ED (issue with token validation)
+async function login(username, password, item, res) {
   let url = "https://api.ecoledirecte.com";
   let data = `data={ "identifiant": "${username}", "motdepasse": "${password}"}`;
-
   let response = await fetch(`${url}/v3/login.awp`, {
     method: "POST",
     headers: {
@@ -30,65 +31,64 @@ async function login(params, username, password, listen, res) {
     },
     body: data,
   });
-
   let result = await response.json();
-  fetchAgenda(params, result.token, listen, res);
+  fetchChanges(result.token, item, res);
 }
 
-async function fetchAgenda(query, tokenEd, listen, res) {
+async function fetchChanges(token, item, res) {
   let url = "https://api.ecoledirecte.com";
-  let data = `data= { "token": "${tokenEd}" }`;
-
-  let response = await fetch(
-    `${url}/v3/Eleves/${query.eleveId}/cahierdetexte.awp?verbe=get&`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/edn",
-      },
-      body: data,
-    }
-  );
-  let result = await response.json();
+  let data = `data= { "token": "${token}" }`;
 
   let new_agenda = [];
 
-  Object.keys(result.data)
-    .map((key) =>
-      result.data[key].map((obj) => Object.assign(obj, { date: key }))
-    )
-    .map((e) => e.forEach((element) => new_agenda.push(element)));
+  await fetch(`${url}/v3/Eleves/${item.eleveId}/cahierdetexte.awp?verbe=get&`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/edn",
+    },
+    body: data,
+  })
+    .then((notes) => notes.json())
+    .then((result) =>
+      Object.keys(result.data)
+        .map((key) =>
+          result.data[key].map((obj) => Object.assign(obj, { date: key }))
+        )
+        .map((e) => e.forEach((element) => new_agenda.push(element)))
+    );
 
-  listen.num == 0
-    ? (await Listens.updateOne(
-        { shortId: query.shortId },
-        { agenda: new_agenda, num: listen.num + 1 }
-      ),
-      res.send({ code: 200, message: "Successfully first agenda get" }))
-    : new Date(listen.creation_date).getMinutes() >= 5
-    ? resetCronJob(listen)
-    : handle_compare(new_agenda, listen, query, res);
+  item.agenda.length === 0
+    ? Listens.updateOne(
+        { shortId: item.shortId },
+        {
+          agenda: new_agenda,
+          num: 1,
+        }
+      ).then(() => res.send({ code: 200, message: `First agenda GET` }))
+    : item.num >= 7
+    ? resetCronJob(item, res)
+    : compareAgenda(new_agenda, item, res);
 }
 
-async function handle_compare(new_agenda, listen, query, res) {
+async function compareAgenda(new_agenda, item, res) {
   yesterday = formatDate(Date.now());
-  let old_agenda = listen.agenda.filter((obj) => obj.date !== yesterday);
+  let old_agenda = item.agenda.filter((obj) => obj.date !== yesterday);
 
-  old_agenda.length !== listen.agenda.length
+  old_agenda.length !== item.agenda.length
     ? (await Listens.updateOne(
-        { shortId: query.shortId },
-        { agenda: new_agenda, num: listen.num + 1 }
+        { shortId: item.shortId },
+        { agenda: new_agenda, num: item.num + 1 }
       ),
       res.send({ code: 200, message: "Successfully agenda date update" }))
     : old_agenda.length !== new_agenda.length
     ? sendNotification(
-        listen,
-        `You have new work to do! (fetch number:${listen.num + 1})`,
+        item,
+        `You have new work to do! (fetch number:${item.num + 1})`,
         res
       )
     : (await Listens.updateOne(
-        { shortId: query.shortId },
-        { agenda: new_agenda, num: listen.num + 1 }
+        { shortId: item.shortId },
+        { agenda: new_agenda, num: item.num + 1 }
       ),
       res.send({ code: 200, message: "Successfully update agenda" }));
 }
@@ -105,10 +105,10 @@ function formatDate(date) {
   return [year, month, day].join("-");
 }
 
-async function sendNotification(listen, value, res) {
+async function sendNotification(item, value, res) {
   let url = `https://edl-core.toutane.now.sh`;
   let response = await fetch(
-    `${url}/api/notif?eleveId=${listen.eleveId}&body=${value}`,
+    `${url}/api/notif?eleveId=${item.eleveId}&body=${value}`,
     {
       method: "GET",
       headers: {
@@ -120,17 +120,20 @@ async function sendNotification(listen, value, res) {
   res.send(result);
 }
 
-async function resetCronJob(listen) {
+async function resetCronJob(item, res) {
   let url = `https://edl-core.toutane.now.sh`;
-  let response = await fetch(
-    `${url}/api/reset?eleveId=${listen.eleveId}&shortId=${listen.shortId}&updated=${listen.updated}&cronId=${listen.cronId}`,
+
+  await fetch(
+    `${url}/api/reset?eleveId=${item.eleveId}&shortId=${item.shortId}&updated=${
+      item.updated
+    }&cronIds=${JSON.stringify(item.cronIds)}&interval=${
+      item.interval
+    }&fetchOn=${item.fetchOn}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/edn",
       },
     }
-  );
-  let result = await response.json();
-  res.send(result);
+  ).then((result) => res.send(result));
 }

@@ -44,9 +44,6 @@ async function fetchChanges(token, item, res) {
 
   await fetch(`${url}/v3/eleves/${item.eleveId}/notes.awp?verbe=get&`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/edn",
-    },
     body: data,
   })
     .then((notes) => notes.json())

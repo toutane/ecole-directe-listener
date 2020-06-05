@@ -12,51 +12,81 @@ mongoose.connect(keys.mongodb.dbURI, () => {
 
 module.exports = (req, res) => {
   resetCronJob(req.query, res);
+  // res.send({ code: 200, messages: "recieve from reset api" });
 };
 
 async function resetCronJob(query, res) {
   let params = { shortId: query.shortId, eleveId: query.eleveId };
+  let cron_job_ids = [];
+
   let cron = `https://www.easycron.com/rest`;
-  let interval = `*/10 * * * *`;
-  let url = `https://edl-core.toutane.now.sh/api/agenda?params=${JSON.stringify(
+
+  let agenda = `https://edl-core.toutane.now.sh/api/agenda?params=${JSON.stringify(
     params
   )}`;
 
-  let response = await fetch(
-    `${cron}/add?token=${token}&cron_job_name=cron_of_${query.eleveId}&cron_expression=${interval}&url=${url}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/edn",
-      },
+  let messages = `https://edl-core.toutane.now.sh/api/messages?params=${JSON.stringify(
+    params
+  )}`;
+
+  let notes = `https://edl-core.toutane.now.sh/api/notes?params=${JSON.stringify(
+    params
+  )}`;
+
+  async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
     }
-  );
-  let result = await response.json();
-  result.status === "success"
-    ? (await Listens.updateOne(
-        { shortId: query.shortId },
-        { cronId: result.cron_job_id, updated: query.updated + 1 }
-      ),
-      deleteOlderCronJob(query, res, result.cron_job_id))
-    : res.send(result);
+  }
+  asyncForEach(JSON.parse(query.fetchOn), async (type) => {
+    await fetch(
+      `${cron}/add?token=${token}&cron_job_name=cron_of_${
+        query.eleveId
+      }&cron_expression=${query.interval}&url=${
+        type === "agenda" ? agenda : type === "messages" ? messages : notes
+      }`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/edn",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((result) =>
+        result.status === "success"
+          ? cron_job_ids.push(result.cron_job_id)
+          : res.send("result")
+      );
+  }).then(async () => {
+    await Listens.updateOne(
+      { shortId: query.shortId },
+      {
+        cronIds: cron_job_ids,
+        num: 7,
+        updated: query.updated + 1,
+        lastUpdate_date: new Date(),
+      }
+    ),
+      deleteOlderCronJob(query, res);
+  });
+  // .then(() => res.send(cron_job_ids));
 }
 
-async function deleteOlderCronJob(query, res, newCronId) {
+async function deleteOlderCronJob(query, res) {
   let cron = `https://www.easycron.com/rest`;
 
-  let response = await fetch(
-    `${cron}/delete?token=${token}&id=${query.cronId}`,
-    {
+  async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  }
+  asyncForEach(query.cronIds, async (id) => {
+    await fetch(`${cron}/delete?token=${token}&id=${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/edn",
       },
-    }
-  );
-  let result = await response.json();
-  result.status === "success"
-    ? res.send(
-        `Successfully reset and remove cron job. New conID: ${newCronId}`
-      )
-    : res.send(result);
+    });
+  }).then(() => res.send("success"));
 }
