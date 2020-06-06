@@ -122,6 +122,7 @@ async function sendNotification(item, value, res) {
 
 async function resetCronJob(item, res) {
   let url = `https://edl-core.toutane.now.sh`;
+  // let url = `http://localhost:3000`;
 
   await fetch(
     `${url}/api/reset?eleveId=${item.eleveId}&shortId=${item.shortId}&updated=${

@@ -70,7 +70,6 @@ async function resetCronJob(query, res) {
     ),
       deleteOlderCronJob(query, res);
   });
-  // .then(() => res.send(cron_job_ids));
 }
 
 async function deleteOlderCronJob(query, res) {
@@ -81,12 +80,12 @@ async function deleteOlderCronJob(query, res) {
       await callback(array[index], index, array);
     }
   }
-  asyncForEach(query.cronIds, async (id) => {
+  asyncForEach(JSON.parse(query.cronIds), async (id) => {
     await fetch(`${cron}/delete?token=${token}&id=${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/edn",
       },
     });
-  }).then(() => res.send("success"));
+  }).then((result) => res.send(result));
 }
