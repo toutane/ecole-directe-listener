@@ -38,8 +38,7 @@ const ListenProvider = (props) => {
   const [listenItem, setListenItem] = useState({ cronIds: [""] });
 
   const [interval, setIntervalNum] = useState(`*/10 * * * *`);
-  // const [fetchOn, setFetchOn] = useState('["messages", "notes"]');
-  const [fetchOn, setFetchOn] = useState('["messages", "agenda"]');
+  const [fetchOn, setFetchOn] = useState('["agenda", "messages", "notes"]');
 
   async function startListening() {
     setIsLoading(true);
@@ -123,6 +122,8 @@ const ListenProvider = (props) => {
   return (
     <Provider
       value={{
+        fetchOn,
+        setFetchOn,
         interval,
         setIntervalNum,
         listenItem,

@@ -15,8 +15,9 @@ export default function FetchOnRadios() {
   };
   return (
     <View style={styles.container}>
-      {types.map((type) => (
+      {types.map((type, i) => (
         <Radio
+          key={i}
           text={type}
           isSelected={JSON.parse(fetchOn).includes(type)}
           touch={(type, isSelected) => handle_change(type, isSelected)}
