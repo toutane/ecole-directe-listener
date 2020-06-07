@@ -64,7 +64,7 @@ Although this project allows me to respond to a real need, it also allows me to 
 
 _To run the lasted Expo build on your iPhone, scan this code:_
 
-<img src="./assets/img/partying-expo-qr.png" alt="partying-expo-qr" style="zoom:50%;" />
+<img src="public/images/edl-expo-qr.png" alt="EDL Client QR Code" style="zoom:50%;" />
 
  _To get the in developpment app:_
 
