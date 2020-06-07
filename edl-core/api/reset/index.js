@@ -63,8 +63,8 @@ async function resetCronJob(query, res) {
       { shortId: query.shortId },
       {
         cronIds: cron_job_ids,
-        num: 7,
-        updated: query.updated + 1,
+        num: 0,
+        updated: query.updated.toString().length + 1,
         lastUpdate_date: new Date(),
       }
     ),
