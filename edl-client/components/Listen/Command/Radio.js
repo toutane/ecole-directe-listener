@@ -4,7 +4,7 @@ import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 export default function Radio(props) {
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={0.6}
       style={styles.container}
       onPress={() => props.touch(props.text, props.isSelected)}
     >
@@ -19,7 +19,9 @@ export default function Radio(props) {
           ]}
         />
       </TouchableOpacity>
-      <Text style={styles.text}>{props.text}</Text>
+      <Text style={styles.text}>
+        {props.text.charAt(0).toUpperCase() + props.text.slice(1)}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -30,7 +32,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     alignItems: "center",
   },
-  text: { marginTop: 5, fontSize: 15, color: "rgba(96,100,109, 0.6)" },
+  text: { marginTop: 7.5, fontSize: 14, color: "rgba(96,100,109, 0.4)" },
   border: {
     justifyContent: "center",
     alignItems: "center",
@@ -41,8 +43,8 @@ const styles = StyleSheet.create({
     borderColor: "rgba(96,100,109, 0.2)",
   },
   circle: {
-    width: 17.5,
-    height: 17.5,
+    width: 15,
+    height: 15,
     borderRadius: 50,
   },
 });

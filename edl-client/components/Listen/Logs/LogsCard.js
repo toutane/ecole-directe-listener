@@ -11,7 +11,7 @@ export default function LogsCard() {
   const { isListening } = useContext(ListenContext);
   const { logs } = useContext(LogsContext);
   return (
-    <View style={{ marginTop: 50 }}>
+    <View style={{ marginTop: !isListening ? 20 : 70 }}>
       <View
         style={[
           styles.card,

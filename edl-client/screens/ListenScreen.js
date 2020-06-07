@@ -3,10 +3,14 @@ import { StyleSheet, View, Text, SafeAreaView } from "react-native";
 
 import CommandView from "../components/Listen/Command/CommandView";
 import LogsCard from "../components/Listen/Logs/LogsCard";
+import FetchOnRadios from "../components/Listen/Command/FetchOnRadios";
+import { ListenContext } from "../contexts/listenContext";
 
 export default function ListenScreen() {
+  const { isListening } = useContext(ListenContext);
   return (
     <SafeAreaView style={[styles.container]}>
+      {!isListening && <FetchOnRadios />}
       <LogsCard />
       <CommandView />
     </SafeAreaView>
