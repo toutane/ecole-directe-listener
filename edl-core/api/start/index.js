@@ -77,6 +77,7 @@ function newListen(query, cron_job_ids, shortId, res) {
     password: query.password,
     cronIds: cron_job_ids,
     tokenEd: query.token,
+    expoPushToken: query.expoPushToken,
     eleveId: query.eleveId,
     agenda: [],
     messages: [],

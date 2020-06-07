@@ -9,6 +9,7 @@ const listenSchema = new Schema({
   password: String,
   cronIds: Array,
   tokenEd: String,
+  expoPushToken: String,
   eleveId: Number,
   agenda: Array,
   messages: Array,

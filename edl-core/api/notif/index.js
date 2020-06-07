@@ -6,7 +6,7 @@ module.exports = (req, res) => {
 
 async function sendClientNotification(query, res) {
   const message = {
-    to: "ExponentPushToken[QgIEbWKYkGW_aMuVKv6EhS]",
+    to: query.expoPushToken,
     sound: "default",
     title: `⚡️EDL-Listener`,
     body: `Send notif to: ${query.eleveId}. Value: ${query.body}`,

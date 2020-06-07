@@ -93,7 +93,7 @@ async function compareMessages(new_messages, item, res) {
 async function sendNotification(item, value, res) {
   let url = `https://edl-core.toutane.now.sh`;
   let response = await fetch(
-    `${url}/api/notif?eleveId=${item.eleveId}&body=${value}`,
+    `${url}/api/notif?eleveId=${item.eleveId}&body=${value}&expoPushToken=${item.expoPushToken}`,
     {
       method: "GET",
       headers: {
