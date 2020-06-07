@@ -2,6 +2,23 @@
 
 > ⚠️ **Disclamer**: This project is under development. It may still contain bugs, its performance is not optimal and its operation is not guaranteed.
 
+## 📸 Screenshots
+
+<p float="left">
+  <img src="public/images/account-screen.png"
+     alt="Account Screen"
+     width="33%"
+     style="float: left; margin-left: 30px;" />
+  <img src="public/images/start-screen.png"
+     alt="Start Listening Screen"
+     width="33%"
+     style="float: left; margin-right: 15px;" />
+  <img src="public/images/server-screen.png"
+     alt="Server Screen"
+     width="33%"
+     style="float: left; margin-right: 15px;" />
+</p>
+
 ## 💭 The Project
 
 The idea of this project is as follows: send a notification to your mobile when one of your teachers gives you a new grade, puts you some work to do or sends you a message on the [Ecole Directe] platform.
@@ -29,10 +46,6 @@ To see if there is a change between a query n and a query n + 1, Ecole Directe L
 
 ## ⚙️ How it works (more precisely)
 
-
-
-### Technologies used
-
 Although this project allows me to respond to a real need, it also allows me to manipulate different techonologies and to play with them, in particular through the APIs that they offer. Among these are:
 
 * **[Expo]** and **[React Native]** for the development of the app, the client side
@@ -47,31 +60,39 @@ Although this project allows me to respond to a real need, it also allows me to 
 [mLab]: https://mlab.com/
 [Easy Cron Jobs]: https://www.easycron.com/
 
+## 📲 Installation
 
+_To run the lasted Expo build on your iPhone, scan this code:_
 
-## 💡 Work to be done
+<img src="./assets/img/partying-expo-qr.png" alt="partying-expo-qr" style="zoom:50%;" />
 
+ _To get the in developpment app:_
 
+- Clone this repo to your computer using this command:
 
-## Installation
+```shell
+git clone git@github.com:toutane/ecole-directe-listener.git
+```
 
+- Go inside the cloning directory with:
 
-## TODO
+```shell
+cd ecole-directe-listener
+```
+- Go inside client directory:
 
-**Client:**
+```shell
+cd edl-client
+```
 
-- [x] Add interval options change in client
-- [ ] Refactoring client UI ( user / listening cron job / server status info )
-- [x] Set up user and server screens
-- [x] Finish Listen and Server screens
-- [ ] Start User screen (sign out btn + user ED infos)
-- [ ] Think about place for listen item data / new works ntoif etc...
+- Install dependencies:
 
-**Core:**
+```shell
+npm install
+```
 
-- [ ] BUGFIX: Reset listen item not working
-- [x] Implement interval choose option
-- [ ] Create restart cron job api to restart cron job / update listen item etc after 2 hours of running time
-- [x] Write ED data to listen item doc in mLab
-- [x] Create core comparaison between last cron jobs and new one
-- [x] Put in listen item cron job info for each job
+- Start Expo client:
+
+```shell
+expo start
+```
