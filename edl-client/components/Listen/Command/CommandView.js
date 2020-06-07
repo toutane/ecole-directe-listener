@@ -25,7 +25,7 @@ export default function CommandView() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    marginTop: 20,
     width: 250,
     flexDirection: "row",
     alignItems: "center",
