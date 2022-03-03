@@ -38,8 +38,6 @@ As the Ecole Directe platform does not offer an API for listening to modificatio
 
 The solution: regularly check for changes and notify the user when there is one.
 
-Thus, EDL regularly makes requests to Ecole Directe to ask it "Did Charles-Antoine get a bad note?" No kidding... I only have good grades.
-
 To see if there is a change between a query n and a query n + 1, Ecole Directe Listener stores in mLab for each listening the data of query n and compares it with the new data of query n + 1, if it are different: it sends you a notification, otherwise the process continues. Attention, even if there are changes, nothing stop.
 
 
